@@ -1,0 +1,22 @@
+Source: robojournal
+Section: x11
+Priority: extra
+Maintainer: Debian KDE Extras Team <pkg-kde-extras@lists.alioth.debian.org>
+Uploaders: Ritesh Raj Sarraf <rrs@debian.org>
+Build-Depends: debhelper (>= 8.0.0), libqt4-dev (>= 4:4.7.0)
+Standards-Version: 3.9.2
+Homepage: http://sourceforge.net/projects/robojournal
+Vcs-Git: git://git.debian.org/pkg-kde/kde-extras/robojournal.git
+Vcs-Browser: http://git.debian.org/?p=pkg-kde/kde-extras/robojournal.git;a=summary
+
+Package: robojournal
+Architecture: any
+Depends: ${shlibs:Depends}, ${misc:Depends}, libqt4-sql-mysql
+Suggests: mysql-server
+Description: cross-platform journal/diary tool
+ RoboJournal is a cross-platform journal/diary tool written in Qt/C++.
+ It works in conjunction with MySQL to allow the user to create
+ journal databases locally or on a remote server. RoboJournal emphasizes
+ streamlined, practical design plus ease-of-use.
+ .
+ RoboJournal runs on Windows and Linux.

@@ -1,0 +1,7 @@
+robojournal (0.2.1-1) unstable; urgency=low
+
+  * Initial release (Closes: #671020)
+  * [f864e8e] add menu with proper xpm icon
+  * [238602a] Imported Upstream version 0.2.1
+
+ -- Ritesh Raj Sarraf <rrs@debian.org>  Tue, 15 May 2012 18:53:20 +0530

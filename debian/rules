@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@ 
+
+DESTDIR=$(CURDIR)/debian/robojournal
+
+override_dh_auto_configure:
+	qmake robojournal.pro
+
+override_dh_auto_install:
+	install -m755 -d $(DESTDIR)/usr/share/pixmaps
+	install -m755 -d $(DESTDIR)/usr/bin
+	install -m755 robojournal $(DESTDIR)/usr/bin
+	install -m644 icons/robojournal-icon.xpm $(DESTDIR)/usr/share/pixmaps
