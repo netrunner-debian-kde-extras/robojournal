@@ -26,6 +26,8 @@
 #include "buffer.h"
 #include "configmanager.h"
 #include <QPushButton>
+#include "firstrun.h"
+#include "ui_firstrun.h"
 
 
 JournalCreator::JournalCreator(QWidget *parent) :
@@ -33,6 +35,12 @@ JournalCreator::JournalCreator(QWidget *parent) :
     ui(new Ui::JournalCreator)
 {
     ui->setupUi(this);
+
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon.png");
+    this->setWindowIcon(unixicon);
+
+#endif
 
     int width=this->width();
     int height=this->height();
@@ -178,7 +186,7 @@ void JournalCreator::CreateJournal(){
             host=ui->Hostname->text();
         }
 
-        cout << host.toStdString();
+        //cout << host.toStdString();
 
         QString newuser=ui->Username->text();
         QString db_name=ui->JournalName->text();
@@ -216,9 +224,11 @@ void JournalCreator::CreateJournal(){
             else{
                 m2.critical(this,"RoboJournal", "Journal creation attempt failed on <b>" + host + "</b>. Please make sure the root password is"
                             " correct and the host is configured properly and then try again.");
+
             }
         }
 
+        // SQLite block goes here when finished
     }
 
 }
@@ -257,6 +267,17 @@ void JournalCreator::FillIn(){
 
     // get username from OS and truncate whitespace
     QString sysuser=getenv("USERNAME");
+
+    if(sysuser.isEmpty()){
+        sysuser=getenv("USER");
+    }
+
+    // bugfix to prevent username from coming up blank on linux systems
+#ifdef unix
+    sysuser=getenv("USER");
+#endif
+
+
     sysuser=sysuser.trimmed();
     sysuser=sysuser.replace(" ","_");
     sysuser=sysuser.toLower();
@@ -350,11 +371,14 @@ void JournalCreator::on_buttonBox_accepted()
 
 void JournalCreator::on_buttonBox_rejected()
 {
+    // If this is the firstrun, return to the FirstRun class. It doesn't exist anymore at this
+    //point, so create a new one. No one will ever know.
     if(Buffer::firstrun){
-        exit(0);
-
+        this->reject();
+        FirstRun f;
+        f.exec();
     }
     else{
-        this->close();
+        this->reject();
     }
 }

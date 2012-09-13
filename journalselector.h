@@ -17,61 +17,46 @@
     along with RoboJournal.  If not, see <http://www.gnu.org/licenses/>.
   */
 
-#ifndef DBLOGIN_H
-#define DBLOGIN_H
+
+#ifndef JOURNALSELECTOR_H
+#define JOURNALSELECTOR_H
 
 #include <QDialog>
+#include <QTreeWidgetItem>
 
 namespace Ui {
-    class DBLogin;
+class JournalSelector;
 }
 
-class DBLogin : public QDialog
+class JournalSelector : public QDialog
 {
     Q_OBJECT
-
+    
 public:
-    explicit DBLogin(QWidget *parent = 0);
-    ~DBLogin();
-    void Refresh();
-
-    bool login_succeeded;
-
-    QString login_host;
-    QString login_user;
-    QString login_pass;
-    QString login_db;
-
-
-    //const QString &pUser;
-    //const QString &pPass;
-    //const QString &pDB;
-    //const QString &pHost;
-
-    QString * pUsername;
-    QString * pHost;
-    QString * pDB;
-
-    void ResetPassword();
-
-protected:
-
+    explicit JournalSelector(QWidget *parent = 0);
+    ~JournalSelector();
+    
 private slots:
+    void on_SearchButton_clicked();
 
-    bool CheckCapsLock(); // check to see if Caps lock is on
+    void on_UseDefaults_clicked(bool checked);
 
-
-
-    void on_UseUserDefault_clicked();
-
-    void on_UseDBDefault_clicked();
+    void on_JournalList_itemClicked(QTreeWidgetItem *item, int column);
 
     void on_buttonBox_accepted();
 
     void on_buttonBox_rejected();
 
+    void on_JournalList_itemDoubleClicked(QTreeWidgetItem *item, int column);
+
 private:
-    Ui::DBLogin *ui;
+    Ui::JournalSelector *ui;
+
+    void JournalSearch();
+    void CreateTree(QStringList journals);
+    void SetPreferences();
+    bool Validate();
+
 };
 
-#endif // DBLOGIN_H
+#endif // JOURNALSELECTOR_H

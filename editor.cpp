@@ -50,7 +50,14 @@ void Editor::ConfirmExit(){
         QMessageBox m(this);
         m.setWindowTitle("RoboJournal");
         m.setIcon(QMessageBox::Question);
-        m.setText("This entry will not be saved if you close the editor now. Are you sure you want to do this?");
+
+        if(Buffer::editmode){
+             m.setText("Any changes you made to this entry have not been saved yet. Are you sure you want to close the editor now?");
+        }
+        else{
+             m.setText("This entry has not been saved. Are you sure you want to close the editor now?");
+        }
+
         m.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
         m.setDefaultButton(QMessageBox::No);
         int choice=m.exec();
@@ -77,6 +84,12 @@ Editor::Editor(QWidget *parent) :
 {
 
     ui->setupUi(this);
+
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon-big.png");
+    this->setWindowIcon(unixicon);
+
+#endif
 
     // disable format options for now
     ui->FormatButton->setDisabled(true);
@@ -173,15 +186,13 @@ bool Editor::UpdateEntry(){
 
     QString body=ui->EntryPost->toPlainText();
     QDate post_date=ui->EntryDate->date();
-    QString tags="null";
-
 
     int day=post_date.day();
     int month=post_date.month();
     int year=post_date.year();
 
     MySQLCore m;
-    bool success=m.Update(title,month,day,year,tags,body,Buffer::editentry);
+    bool success=m.Update(title,month,day,year,body,Buffer::editentry);
     return success;
 
 }
@@ -415,14 +426,16 @@ void Editor::on_PostEntry_clicked()
     if(Buffer::editmode){ // edit mode
 
         if((ui->EntryPost->toPlainText()==NULL) || (ui->EntryTitle->text()==NULL)){
-            m.critical(this,"Error","The title and body of this entry must be filled in before RoboJournal can update it.");
+            m.critical(this,"RoboJournal","You must fill in the title and body of this entry before "
+                       "RoboJournal can save it.");
         }
         else{
             bool success=UpdateEntry();
 
             if(success){
                 this->hide();
-                m.information(this,"RoboJoural", "<em>" + ui->EntryTitle->text() + "</em> was successfully updated.");
+                m.information(this,"RoboJoural", "\"" + ui->EntryTitle->text() +
+                              "\" was successfully updated.");
                 close();
             }
         }
@@ -430,14 +443,16 @@ void Editor::on_PostEntry_clicked()
     else{ // new entry mode
 
         if((ui->EntryPost->toPlainText()==NULL) || (ui->EntryTitle->text()==NULL)){
-            m.critical(this,"Error","The title and body of this entry must be filled in before RoboJournal can post it to the database.");
+            m.critical(this,"RoboJournal","You must fill in the title and body of this entry before "
+                       "RoboJournal can save it.");
         }
         else{
             bool success=NewEntry();
 
             if(success){
                 this->hide();
-                m.information(this,"RoboJoural", "<em>" + ui->EntryTitle->text() + "</em> was successfully added to your journal.");
+                m.information(this,"RoboJoural", "\"" + ui->EntryTitle->text() +
+                              "\" was successfully added to your journal.");
                 close();
             }
         }

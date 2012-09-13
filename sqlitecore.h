@@ -23,6 +23,7 @@
 
 #include <QtSql/QSqlDatabase>
 
+
 class SQLiteCore
 {
 public:

@@ -23,7 +23,10 @@ SOURCES += main.cpp\
     sqlitecore.cpp \
     aboutrj.cpp \
     firstrun.cpp \
-    journalcreator.cpp
+    journalcreator.cpp \
+    tagger.cpp \
+    journalselector.cpp \
+    entryexporter.cpp
 
 HEADERS  += mainwindow.h \
     config.h \
@@ -37,7 +40,10 @@ HEADERS  += mainwindow.h \
     sqlitecore.h \
     aboutrj.h \
     firstrun.h \
-    journalcreator.h
+    journalcreator.h \
+    tagger.h \
+    journalselector.h \
+    entryexporter.h
 
 FORMS    += mainwindow.ui \
     config.ui \
@@ -46,7 +52,10 @@ FORMS    += mainwindow.ui \
     dblogin.ui \
     aboutrj.ui \
     firstrun.ui \
-    journalcreator.ui
+    journalcreator.ui \
+    tagger.ui \
+    journalselector.ui \
+    entryexporter.ui
 
 RESOURCES  = images.qrc
 
@@ -57,3 +66,8 @@ RC_FILE = icon.rc
 
 target.path = /usr/local/bin
 INSTALLS += target
+
+win32{
+	CONFIG += qt release
+}
+

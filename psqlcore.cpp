@@ -20,7 +20,6 @@
 
 #include "psqlcore.h"
 #include <QtSql/QSqlDatabase>
-
 #include <iostream>
 #include "buffer.h"
 

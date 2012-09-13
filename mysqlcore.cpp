@@ -22,7 +22,6 @@
 #include "buffer.h"
 #include <iostream>
 #include <QtSql/QSqlDatabase>
-
 #include <QSqlQuery>
 #include <QMessageBox>
 #include "editor.h"
@@ -39,13 +38,171 @@ int MySQLCore::ID;
 QString MySQLCore::error_code;
 
 QString MySQLCore::recordnum;
-//
+
+//################################################################################################
+
 MySQLCore::MySQLCore()
 {
 }
 
 
-// upgrade journal to RoboJournal 0.2 compatible version by adding [time varchar(5)] column
+//################################################################################################
+// This is for the "export all entries" function. This loads each entry into a QStringList and then
+// adds the stringlist to a QList. (8/8/12)
+QList<QStringList> MySQLCore::DumpDatabase(bool asc){
+
+    QList<QStringList> journal;
+
+    db.open();
+    QString query;
+
+    // sort ascending
+    if(asc){
+        query="SELECT title,month,day,year,tags,body,time FROM entries ORDER BY id ASC";
+    }
+    //sort descending
+    else{
+        query="SELECT title,month,day,year,tags,body,time FROM entries ORDER BY id DESC";
+    }
+
+    QSqlQuery q(query);
+    q.exec();
+
+    while(q.next()){
+        QVariant v0=q.value(0); // title value
+        QVariant v1=q.value(1); // month value
+        QVariant v2=q.value(2); // day value
+        QVariant v3=q.value(3); // year value
+        QVariant v4=q.value(4); // tags value
+        QVariant v5=q.value(5); // body value
+        QVariant v6=q.value(6); // time value
+
+        QString title=v0.toString();
+        QString month=v1.toString();
+        QString day=v2.toString();
+        QString year=v3.toString();
+        QString tags=v4.toString();
+        QString body=v5.toString();
+        QString time=v6.toString();
+
+        QStringList entry;
+        entry << title << month << day << year << tags << body << time;
+
+        // add this entry to QList
+        journal.append(entry);
+
+        // wipe entry clean for next row
+        entry.clear();
+    }
+
+    db.close();
+
+    return journal;
+}
+
+//################################################################################################
+
+// Get list of databases for JournalSelector class
+QStringList MySQLCore::GetDatabaseList(QString hostname, QString port, QString username, QString password){
+    using namespace std;
+
+    // Bugfix 8/8/12: Save old login data in case login fails. That way other connections won't get broken after
+    // exiting JournalSelector
+    old_username=db.userName();
+    old_password=db.password();
+
+    int socket=port.toInt();
+    //cout << "Data: " << hostname.toStdString() + ";" +username.toStdString() + ";" +
+    //password.toStdString(); + ";" + socket;
+
+    // use information_schema database if Buffer::database_name is null.
+    // that way, there will not be a segfault due to a a null variable.
+    // we don't want ot do anything with that database, just link to it.
+    if(Buffer::database_name.isEmpty()){
+        Buffer::database_name="information_schema";
+    }
+
+    //QSqlDatabase db2;
+    db = QSqlDatabase::addDatabase("QMYSQL");
+    db.setHostName(hostname);
+    db.setPort(socket);
+    db.setUserName(username);
+    db.setPassword(password);
+    db.setDatabaseName(Buffer::database_name);
+
+    QStringList journals;
+
+
+    bool success=db.open();
+
+
+    if(success){
+        QSqlQuery q("SHOW DATABASES");
+
+        q.exec();
+
+        QString next;
+
+        while(q.next()){
+            QVariant result=q.value(0);
+            next=result.toString();
+
+            if((next!="information_schema") && (next!="performance_schema")){
+                journals.append(next);
+            }
+
+
+            //cout << next.toStdString() << endl;
+        }
+
+        if(journals.size()==0){
+            QMessageBox b;
+            b.information(NULL,"RoboJournal","RoboJournal found no databases on <b>" + hostname + "</b>.");
+        }
+    }
+    else{
+
+        // If there's no MySQL, display an error
+        if(!db.isDriverAvailable("QMYSQL")){
+            success=false;
+            cout << "OUTPUT: MySQL support was not found! MySQL functionality disabled." << endl;
+            QMessageBox a;
+            a.critical(NULL,"RoboJournal","RoboJournal could not find or use the Qt MySQL driver. "
+                       "This problem occurs if the Qt environment used to compile RoboJournal was built without MySQL support.");
+        }
+
+        if(db.isOpenError()){
+            QMessageBox m;
+            QString reason;
+
+            if((hostname=="localhost") || (hostname=="127.0.0.1")){
+                reason="Make sure you entered the correct username/password and try again.";
+            }
+            else{
+                reason="Are you allowed to access <b>" + hostname +
+                        "</b> from this computer? If so, make sure you entered the correct username/password and try again.";
+            }
+
+            m.critical(NULL,"RoboJournal","RoboJournal could not connect to  <b>" +
+                       hostname + "</b>.<br><br>" + reason );
+        }
+    }
+
+    // if login fails, restore the old values before closing the database. That way, the connections in the rest of
+    // the app won't get broken.
+    if(!success){
+        db.setUserName(old_username);
+        db.setPassword(old_password);
+        // clean up
+        old_password.clear();
+        old_username.clear();
+    }
+
+    db.close();
+    return journals;
+}
+//################################################################################################
+// upgrade journal to RoboJournal >0.1 compatible version by adding [time varchar(5)] column
 bool MySQLCore::UpgradeJournal(QString root_pass){
     db = QSqlDatabase::addDatabase("QMYSQL");
     db.setHostName(Buffer::host);
@@ -66,7 +223,7 @@ bool MySQLCore::UpgradeJournal(QString root_pass){
 }
 
 
-
+//################################################################################################
 // make sure the current database is "sane" (has the right structure) before attempting to use it.
 
 bool MySQLCore::SanityCheck(){
@@ -115,11 +272,11 @@ bool MySQLCore::SanityCheck(){
         }
 
     }
-
+    db.close();
     return is_sane;
 }
 
-
+//################################################################################################
 // Connect to the database
 bool MySQLCore::Connect(){
 
@@ -139,11 +296,18 @@ bool MySQLCore::Connect(){
     db.setUserName(user);
     db.setDatabaseName(database);
     db.setPassword(password);
+
+    if(Buffer::SSL){
+        db.setConnectOptions("CLIENT_SSL=1");
+    }
+
+
     bool success=db.open();
 
     // The idea here just to see if we can create a connection at all.
     // if success returns true, the login form class DBLogin proceeds and the rest of the
     // program is unlocked. Other parts of the program can then call MysqlCore directly as needed.
+
 
     if(success){
         cout << "SUCCESS!"<< endl;
@@ -156,10 +320,13 @@ bool MySQLCore::Connect(){
         db.close();
     }
 
+
+
+
     return success;
 }
-
-
+//################################################################################################
+// I don't think this is even being used anymore
 void MySQLCore::Disconnect(){
     using namespace std;
     cout << "OUTPUT: Attempting to close MySQL connection...";
@@ -171,28 +338,36 @@ void MySQLCore::Disconnect(){
 
 
 }
-
+//################################################################################################
 // Update a row with new data. This is invoked from the Editor class if editmode==true.
-bool MySQLCore::Update(QString title, int month, int day, int year, QString tags, QString body, QString id){
+bool MySQLCore::Update(QString title, int month, int day, int year,  QString body, QString id){
     using namespace std;
     db.open();
 
-    QSqlQuery update("UPDATE entries set title=?, month=?, day=?, year=?, tags=?, body=? WHERE id=" + id);
+    QSqlQuery update("UPDATE entries set title=?, month=?, day=?, year=?, body=? WHERE id=" + id);
     update.bindValue(0, title);
     update.bindValue(1, month);
     update.bindValue(2, day);
     update.bindValue(3, year);
-    update.bindValue(4, tags);
-    update.bindValue(5, body);
+    update.bindValue(4, body);
 
     bool success=update.exec();
     db.close();
 
     return success;
 }
+//################################################################################################
+bool MySQLCore::UpdateTags(QString tag_data, QString id){
+    db.open();
+    QSqlQuery tag("UPDATE entries SET tags=? WHERE id=" + id);
+    tag.bindValue(0,tag_data);
+    bool success=tag.exec();
+    db.close();
+    return success;
+}
 
 
-
+//################################################################################################
 bool MySQLCore::AddEntry(){
     using namespace std;
     db.open();
@@ -224,7 +399,7 @@ bool MySQLCore::AddEntry(){
         //cout << "OUTPUT: Current timestamp: " << timestamp.toStdString() << endl;
         success=addentry.exec();
 
-        db.close();
+
 
     }
     else{
@@ -237,19 +412,12 @@ bool MySQLCore::AddEntry(){
         addentry.bindValue(4, tags);
         addentry.bindValue(5, body);
         success=addentry.exec();
-
-        db.close();
     }
-
-
-
-
-
-
+    db.close();
     return success;
-
 }
 
+//################################################################################################
 bool MySQLCore::DeleteEntry(QString id){
 
     db.open();
@@ -257,9 +425,10 @@ bool MySQLCore::DeleteEntry(QString id){
     QSqlQuery q(query);
 
     bool success=q.exec();
+    db.close();
     return success;
 }
-
+//################################################################################################
 // Get day and year based on entry
 QString MySQLCore::TimeStamp(QString id){
     using namespace std;
@@ -307,7 +476,7 @@ QString MySQLCore::TimeStamp(QString id){
     return timestamp;
 }
 
-
+//################################################################################################
 // Function that retrieves entry $index from the database and
 // returns data from "body" as a QString. This is meant to be called from the EntryList tree and
 // index should be the value from the second hidden column.
@@ -331,6 +500,8 @@ QString MySQLCore::RetrieveEntry(QString id){
     return entry;
 }
 
+
+//################################################################################################
 /*
 
  Retrieve full entry from database to populate Editor form. This function is ONLY
@@ -372,7 +543,7 @@ QList<QString> MySQLCore::RetrieveEntryFull(QString id){
     return EntryArray;
 }
 
-
+//################################################################################################
 // Get the most recent entry from the db and return it as a QString
 QString MySQLCore::Recent(){
 
@@ -396,7 +567,7 @@ QString MySQLCore::Recent(){
 
     return body;
 }
-
+//################################################################################################
 QString MySQLCore::GetPrevious(){
     db.open();
     ID--;
@@ -413,7 +584,7 @@ QString MySQLCore::GetPrevious(){
 
 }
 
-
+//################################################################################################
 QList<QString> MySQLCore::getYear(){
     using namespace std;
     QList <QString> YearList;
@@ -480,7 +651,7 @@ QList<QString> MySQLCore::getYear(){
 
     return YearList;
 }
-
+//################################################################################################
 QList<QString> MySQLCore::getMonth(QString nextyear){
     using namespace std;
     QList <QString> MonthList;
@@ -496,7 +667,7 @@ QList<QString> MySQLCore::getMonth(QString nextyear){
         QVariant result=getmonth.value(0);
         QString month=result.toString();
 
-          if(month!=recent){
+        if(month!=recent){
             //cout << "Inserting month: " << month.toStdString() << endl;
             MonthList.append(month);
             pos++;
@@ -507,7 +678,7 @@ QList<QString> MySQLCore::getMonth(QString nextyear){
     db.close();
     return MonthList;
 }
-
+//################################################################################################
 QList<QString> MySQLCore::getDay(QString itemmonth, QString nextyear){
     using namespace std;
     QList <QString> DayList;
@@ -536,7 +707,7 @@ QList<QString> MySQLCore::getDay(QString itemmonth, QString nextyear){
     return DayList;
 
 }
-
+//################################################################################################
 QList<QString> MySQLCore::getEntries(QString itemday, QString itemmonth){
     db.open();
     QList <QString> EntryList;
@@ -579,7 +750,7 @@ QList<QString> MySQLCore::getEntries(QString itemday, QString itemmonth){
     return EntryList;
 
 }
-
+//################################################################################################
 // get and process timestamp
 QString MySQLCore::GetTimestamp(QString id){
 
@@ -611,10 +782,11 @@ QString MySQLCore::GetTimestamp(QString id){
     }
 
     //cout << "Timestamp: " + timestamp.toStdString() << endl;
+    db.close();
     return timestamp;
 }
 
-
+//################################################################################################
 // Get title from database
 QString MySQLCore::GetTitle(QString id){
     using namespace std;
@@ -635,10 +807,51 @@ QString MySQLCore::GetTitle(QString id){
 
     return title;
 }
+//################################################################################################
+// Get tags from the database
+QString MySQLCore::GetTags(QString id){
+    using namespace std;
+    db.open();
+    QSqlQuery q("SELECT tags FROM entries WHERE id=" + id);
+    q.exec();
 
+    QString tags;
+    while(q.next()){
+        QVariant result=q.value(0);
+        tags=result.toString();
+        //cout << entry.toStdString() << endl;
+    }
 
+    db.close();
+    return tags;
+}
+//################################################################################################
+// Create aggregated tag list
+QList<QString> MySQLCore::TagSearch(){
+    using namespace std;
+    QList<QString> tags;
+
+    db.open();
+    QSqlQuery q("SELECT tags FROM entries");
+    q.exec();
+
+    QString next_tag;
+    while(q.next()){
+        QVariant result=q.value(0);
+        next_tag=result.toString();
+
+        // add the tag data to QList, excluding NULL entries
+        if((next_tag != "null") && (next_tag != "Null")){
+            //cout << "Adding: " << next_tag.toStdString() << endl;
+            tags.append(next_tag);
+        }
+    }
+    db.close();
+    return tags;
+}
+
+//################################################################################################
 // This creates the list of all entries in the database so we can browse backward and forward
-
 QList<QString> MySQLCore::Create_ID_List(int year_range){
     using namespace std;
     QList <QString> IDList;
@@ -662,6 +875,7 @@ QList<QString> MySQLCore::Create_ID_List(int year_range){
     return IDList;
 }
 
+//################################################################################################
 /*
 
   MySQLcore::getEntriesMonth() is only called from MainWindow if Buffer::sortbyday==false.
@@ -695,11 +909,11 @@ QList<QString> MySQLCore::getEntriesMonth(QString month, QString year){
         EntryList.insert(pos, item);
         pos++;
     }
-
+    db.close();
     return EntryList;
 }
 
-
+//################################################################################################
 /*
   *THE* most important function, for without this none of the other MySQL commands are of any use whatsoever
   unless you know how to set everything up yourself. This function uses the root account on $host to
@@ -711,7 +925,13 @@ bool MySQLCore::CreateDatabase(QString host,QString root_pass, QString db_name,
                                QString port, QString newuser, QString newuser_pass){
     using namespace std;
 
+    // Bugfix 8/21/12: Save old login data in case login fails. That way other connections won't get broken after
+    // exiting JournalSelector
+    old_username=db.userName();
+    old_password=db.password();
 
+    bool success=true; //success should be true unless something goes wrong and changes it to false
+    bool exists=false;
 
     int db_port=port.toInt();
 
@@ -722,61 +942,99 @@ bool MySQLCore::CreateDatabase(QString host,QString root_pass, QString db_name,
     db.setPassword(root_pass);
     db.open();
 
-    // create database
-    QSqlQuery create_db("CREATE DATABASE IF NOT EXISTS " + db_name);
-    bool success1=create_db.exec();
-    if(success1){
-        cout << "OUTPUT: Successfully created new journal "  << db_name.toStdString() << endl;
-    }
-    else{
-        cout << "ERROR: Could not create " << db_name.toStdString() << endl;
-    }
-    db.close();
+
+    QSqlQuery duplicate_check("SHOW DATABASES");
+    duplicate_check.exec();
 
 
-    db.setDatabaseName(db_name);
-    db.open();
-    // create the entries table now
+    while(duplicate_check.next()){
+        QVariant b=duplicate_check.value(0);
+        QString output=b.toString();
+        //cout << "OUTPUT: This is the schema check: " << output.toStdString() << endl;
 
-    QSqlQuery create_entries("CREATE TABLE entries(id int not null auto_increment, "
-                             "primary key (id), title VARCHAR(500), month VARCHAR(2), "
-                             "day VARCHAR(2), year VARCHAR(4), tags VARCHAR(300), "
-                             "body TEXT, time VARCHAR(5))");
-
-
-    bool success2=create_entries.exec();
-    if(success2){
-        cout << "OUTPUT: Successfully created new ENTRIES table on journal " << db_name.toStdString() << endl;
-    }
-    else{
-        cout << "ERROR: Could not create ENTRIES table on " << db_name.toStdString() << endl;
+        // display a dialog if the database exists already.
+        if(db_name==output){
+            success=false;
+            exists=true;
+            break;
+        }
     }
     db.close();
 
-    // Grant rights to new user
-    db.open();
-    QString grant="GRANT SELECT, INSERT, DROP, UPDATE, DELETE ON " + db_name +
-            ".* TO " + newuser + "@'" + host + "' IDENTIFIED BY '" + newuser_pass + "'";
+    // only proceed if the other database does not exist
+    if(!exists){
+        db.open();
+        // create database
+        QSqlQuery create_db("CREATE DATABASE IF NOT EXISTS " + db_name);
+        create_db.exec();
 
-    QSqlQuery grant_rights(grant);
-    //cout << grant.toStdString() << endl;
-    bool success3=grant_rights.exec();
+        db.close();
 
-    if(success3){
-        cout << "OUTPUT: Rights granted to new user " << newuser.toStdString() <<
-                " on journal " << db_name.toStdString() << endl;
+        db.setDatabaseName(db_name);
+        db.open();
+        // create the entries table now
+
+        QSqlQuery create_entries("CREATE TABLE entries(id int not null auto_increment, "
+                                 "primary key (id), title VARCHAR(500), month VARCHAR(2), "
+                                 "day VARCHAR(2), year VARCHAR(4), tags VARCHAR(300), "
+                                 "body TEXT, time VARCHAR(5))");
+
+        create_entries.exec();
+        db.close();
+
+        // Grant rights to new user
+        db.open();
+        QString grant="GRANT SELECT, INSERT, DROP, UPDATE, DELETE ON " + db_name +
+                ".* TO " + newuser + "@'" + host + "' IDENTIFIED BY '" + newuser_pass + "'";
+
+        QSqlQuery grant_rights(grant);
+
+        grant_rights.exec();
+
+        db.close();
     }
-    else{
-        cout << "ERROR: Could not grant rights to user " <<  newuser.toStdString() <<
-                " on journal " << db_name.toStdString() << endl;
+
+    // show warning if database exists
+    if(exists){
+        cout << "OUTPUT: " << db_name.toStdString() << " already exists! The original database was not replaced." << endl;
+        QMessageBox s;
+        s.critical(NULL,"RoboJournal","<b>" + db_name + "</b> already exists on <b>" + host +
+                   "</b>! The existing <b>" + db_name + "</b> database was not changed or replaced.");
     }
 
-    db.close();
 
-
-    bool success=true;
+    // show an error if we failed to connect
     if(db.isOpenError()){
         success=false;
+        cout << "OUTPUT: RoboJournal could not connect. Are you using the right username and password?" << endl;
+    }
+
+    // If there's no MySQL, display an error
+    if(!db.isDriverAvailable("QMYSQL")){
+        success=false;
+        cout << "OUTPUT: MySQL support was not found! MySQL functionality disabled." << endl;
+        QMessageBox a;
+        a.critical(NULL,"RoboJournal","RoboJournal could not find or use the Qt MySQL driver. "
+                   "This problem occurs if the Qt environment used to compile RoboJournal was built without MySQL support.");
+    }
+
+    // if everything went ok provide feedback.
+    if(success){
+
+        cout << "OUTPUT: Rights granted to new user " << newuser.toStdString() <<
+                " on journal " << db_name.toStdString() << endl;
+
+        cout << "OUTPUT: Successfully created new journal "  << db_name.toStdString() << endl;
+    }
+
+    // if login fails, restore the old values before closing the database. That way, the connections in the rest of
+    // the app won't get broken.
+    if(!success){
+        db.setUserName(old_username);
+        db.setPassword(old_password);
+        // clean up
+        old_password.clear();
+        old_username.clear();
     }
 
 

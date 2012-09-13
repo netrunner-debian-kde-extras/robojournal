@@ -32,9 +32,8 @@
 #include <QFileDialog>
 #include <QFont>
 #include <QDate>
-
-
-
+#include <QAbstractButton>
+//#include <QSslSocket>
 
 Buffer b;
 static ConfigManager m;
@@ -47,6 +46,12 @@ Config::Config(QWidget *parent) :
     using namespace std;
     ui->setupUi(this);
 
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon-big.png");
+    this->setWindowIcon(unixicon);
+
+#endif
+
     // hide question mark button in title bar when running on Windows
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 
@@ -55,13 +60,31 @@ Config::Config(QWidget *parent) :
     this->setMaximumSize(width,height);
     this->setMinimumSize(width,height);
 
+    //ui->RichText->setVisible(false);
+
     Populate();
+}
 
+//################################################################################################
+// This function should be invoked if the user makes changes, applies, and ONLY THEN changes something else.
+// Without this function, they would have to re-load the form before more changes could be made.
+void Config::UnlockButtons(){
 
+    QAbstractButton *ok=ui->buttonBox->button(QDialogButtonBox::Ok);
+    QAbstractButton *apply=ui->buttonBox->button(QDialogButtonBox::Apply);
+    QAbstractButton *cancel=ui->buttonBox->button(QDialogButtonBox::Cancel);
+
+    // unlock the buttons that allow the user to apply new changes made since the last apply.
+    if(!apply->isEnabled()){
+        cancel->setEnabled(true);
+        ok->setDisabled(true);
+        apply->setEnabled(true);
+    }
 
 }
 
-// Save settings changes. This function is triggered when user clicks "OK"
+//################################################################################################
+// Save settings changes. This function is triggered when user clicks "APPlY"
 void Config::SaveConfig(){
     Config::new_default_host=ui->DefaultHost->text();
     Config::new_default_port=ui->DBPort->text();
@@ -197,12 +220,12 @@ void Config::SaveConfig(){
         Config::new_record_time="0";
     }
 
-    if(ui->UseLocalTime->isChecked()){
-        Config::new_use_local_time="1";
-    }
-    else{
-        Config::new_use_local_time="0";
-    }
+//    if(ui->UseLocalTime->isChecked()){
+//        Config::new_use_local_time="1";
+//    }
+//    else{
+//        Config::new_use_local_time="0";
+//    }
 
     if(ui->Use24Clock->isChecked()){
         Config::new_24_hr="1";
@@ -218,12 +241,35 @@ void Config::SaveConfig(){
         Config::new_show_title="0";
     }
 
-    if(ui->RichText->isChecked()){
-        Config::new_rich_text="1";
+
+    if(ui->UseSSL->isChecked()){
+        Config::new_SSL="1";
     }
     else{
-        Config::new_rich_text="0";
+        Config::new_SSL="0";
     }
+
+    if(ui->RangeIndicator->isChecked()){
+        Config::new_indicator="1";
+    }
+    else{
+        Config::new_indicator="0";
+    }
+
+
+    if(ui->AutoLoad->isChecked()){
+        Config::new_autoload="1";
+    }
+    else{
+        Config::new_autoload="0";
+    }
+
+//    if(ui->RichText->isChecked()){
+//        Config::new_rich_text="1";
+//    }
+//    else{
+//        Config::new_rich_text="0";
+//    }
 
     int datemode=ui->DateFormat->currentIndex();
 
@@ -247,17 +293,22 @@ void Config::SaveConfig(){
     m.UpdateConfig();
     MadeChanges=true;
 }
-
+//################################################################################################
 // Background selection function
 QString Config::BackgroundSelect(){
     QFileDialog f;
     QString file=f.getOpenFileName(this,"Choose Background Image","","Image Files (*.png *.jpg *.bmp *.gif)");
     return file;
 }
-
+//################################################################################################
 //Function that allows the user to select a color and returns the color as RGB hex value
 QString Config::ColorSelect(){
+
+    // bugfix for 0.3 8/26/12: make the dialog load the current color when clicked
+    QColor current(ui->ColorValue->text());
     QColorDialog d;
+    d.setCurrentColor(current);
+    d.setOption(QColorDialog::DontUseNativeDialog,true);
     d.exec();
     QColor  choice=d.selectedColor();
     QString color=choice.name();
@@ -269,6 +320,19 @@ QString Config::ColorSelect(){
 void Config::Populate(){
     using namespace std;
 
+
+
+        ui->UseSSL->setChecked(false);
+        ui->UseSSL->setVisible(false);
+        ui->UseSSL->setToolTip("<p>This option allows RoboJournal to use Secure Socket Layer encryption when checked"
+        ". Since it looks like this copy of RoboJournal was compiled without OpenSSL, this option is quite useless to "
+        "you and has been disabled.</p>");
+
+
+    // lock ok button until Apply gets clicked
+    QAbstractButton *ok=ui->buttonBox->button(QDialogButtonBox::Ok);
+    ok->setDisabled(true);
+
     // Make file and RGB fields non-editable
     ui->ColorValue->setReadOnly(true);
     ui->BGImage->setReadOnly(true);
@@ -277,7 +341,7 @@ void Config::Populate(){
     ui->DateExample->clear();
 
     // set local time option invisible for now
-    ui->UseLocalTime->setVisible(false);
+    //ui->UseLocalTime->setVisible(false);
     //ui->RichText->setVisible(false);
 
 
@@ -285,7 +349,7 @@ void Config::Populate(){
     ui->DBEngine->setDisabled(true);
 
     // disable rich text until it is ready
-    ui->RichText->setEnabled(false);
+    //ui->RichText->setEnabled(false);
 
 
 
@@ -350,10 +414,12 @@ void Config::Populate(){
     if(Buffer::allentries){
         ui->ShowAllEntries->setChecked(true);
         ui->YearRange->setDisabled(true);
+        ui->RangeIndicator->setDisabled(true);
     }
     else{ // show entry range instead
         ui->ShowEntryRange->setChecked(true);
         ui->YearRange->setEnabled(true);
+        ui->RangeIndicator->setEnabled(true);
     }
 
     if(Buffer::sortbyday){
@@ -371,9 +437,9 @@ void Config::Populate(){
         ui->Use24Clock->setChecked(true);
     }
 
-    if(Buffer::use_system_time){
-        ui->UseLocalTime->setChecked(true);
-    }
+//    if(Buffer::use_system_time){
+//        ui->UseLocalTime->setChecked(true);
+//    }
 
     if(Buffer::show_title){
         ui->ShowTitle->setChecked(true);
@@ -407,8 +473,25 @@ void Config::Populate(){
     }
     else{
         ui->Use24Clock->setEnabled(false);
-        ui->UseLocalTime->setEnabled(false);
+        //ui->UseLocalTime->setEnabled(false);
 
+    }
+
+
+    if(Buffer::autoload){
+        ui->AutoLoad->setChecked(true);
+    }
+    else{
+        ui->AutoLoad->setChecked(false);
+    }
+
+
+    if(Buffer::SSL){
+        ui->UseSSL->setChecked(true);
+    }
+
+    if(Buffer::use_indicator){
+        ui->RangeIndicator->setChecked(true);
     }
 
     int index=Buffer::date_format.toInt();
@@ -443,35 +526,41 @@ void Config::Populate(){
     year.addButton(ui->ShowAllEntries);
     cout << "Done!" << endl;
 }
-
+//################################################################################################
 Config::~Config()
 {
     delete ui;
 }
-
+//################################################################################################
 void Config::on_DefaultMenuPos_currentIndexChanged(int index)
 {
     index=-1;
 
 }
-
+//################################################################################################
 void Config::on_ShowAllEntries_clicked()
 {
     ui->YearRange->setDisabled(true);
-}
+    ui->RangeIndicator->setDisabled(true);
 
+    UnlockButtons();
+}
+//################################################################################################
 void Config::on_ShowEntryRange_clicked()
 {
     ui->YearRange->setEnabled(true);
+    ui->RangeIndicator->setEnabled(true);
+
+    UnlockButtons();
 }
 
-
+//################################################################################################
 // Update config
 void Config::on_buttonBox_accepted()
 {
-    SaveConfig();
-}
 
+}
+//################################################################################################
 void Config::on_buttonBox_rejected()
 {
     MadeChanges=false;
@@ -480,7 +569,7 @@ void Config::on_buttonBox_rejected()
         exit(0);
     }
 }
-
+//################################################################################################
 void Config::on_DBEngine_currentIndexChanged(int index)
 {
     switch(index){
@@ -509,7 +598,7 @@ void Config::on_DBEngine_currentIndexChanged(int index)
 
     }
 }
-
+//################################################################################################
 /* Special function that only gets called from the FirstRun class.
   This lets the user connect RJ to an existing database. When this is called, there isn't supposed to be
   a config file, so it becomes necessary to create one first before this function is called and then load its data
@@ -524,22 +613,22 @@ void Config::ManualConfig(){
     ui->DefaultUser->clear();
     ui->DBPort->clear();
 }
-
+//################################################################################################
 void Config::on_RecordTime_clicked(bool checked)
 {
     if(checked){
         ui->Use24Clock->setEnabled(true);
-        ui->UseLocalTime->setEnabled(true);
+        //ui->UseLocalTime->setEnabled(true);
     }
     else{
         ui->Use24Clock->setChecked(false);
-        ui->UseLocalTime->setChecked(false);
+        //ui->UseLocalTime->setChecked(false);
         ui->Use24Clock->setEnabled(false);
-        ui->UseLocalTime->setEnabled(false);
+        //ui->UseLocalTime->setEnabled(false);
     }
 }
 
-
+//################################################################################################
 void Config::on_DateFormat_currentIndexChanged(int index)
 {
     // get today's date for example
@@ -568,7 +657,7 @@ void Config::on_DateFormat_currentIndexChanged(int index)
 }
 
 
-
+//################################################################################################
 void Config::on_ColorButton_clicked()
 {
     QString color=ColorSelect();
@@ -576,7 +665,7 @@ void Config::on_ColorButton_clicked()
     ui->ColorValue->setText(color);
 
 }
-
+//################################################################################################
 void Config::on_BrowseButton_clicked()
 {
     QString file=BackgroundSelect();
@@ -589,12 +678,13 @@ void Config::on_BrowseButton_clicked()
     }
 
 }
-
+//################################################################################################
 void Config::on_NativeAppearance_clicked()
 {
     ui->CustomizeSettings->setEnabled(false);
+    UnlockButtons();
 }
-
+//################################################################################################
 void Config::on_CustomAppearance_clicked()
 {
     ui->CustomizeSettings->setEnabled(true);
@@ -614,8 +704,10 @@ void Config::on_CustomAppearance_clicked()
     // set default text color to black
     ui->ColorValue->setText("#000000");
 
-}
+    UnlockButtons();
 
+}
+//################################################################################################
 void Config::on_ClearButton_clicked()
 {
     ui->BGImage->clear();
@@ -623,4 +715,163 @@ void Config::on_ClearButton_clicked()
     ui->Entrylist_Background->setEnabled(false);
     ui->TileBackground->setChecked(false);
     ui->Entrylist_Background->setChecked(false);
+}
+//################################################################################################
+void Config::on_buttonBox_clicked(QAbstractButton *button)
+{
+    // User clicks apply button
+     if(button==ui->buttonBox->button(QDialogButtonBox::Apply)){
+         SaveConfig();
+
+         // unlock OK button
+         QAbstractButton *ok=ui->buttonBox->button(QDialogButtonBox::Ok);
+         ok->setEnabled(true);
+
+         // lock the Apply button once we are finished with it
+         QAbstractButton *apply=ui->buttonBox->button(QDialogButtonBox::Apply);
+         apply->setDisabled(true);
+
+         // Lock the Cancel button once we Apply b/c it would make no sense to cancel anymore
+         QAbstractButton *cancel=ui->buttonBox->button(QDialogButtonBox::Cancel);
+         cancel->setDisabled(true);
+     }
+}
+
+
+void Config::on_UseDefaults_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_ShowConfirmation_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_IconText_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_DefaultMenuPos_currentIndexChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_RecordTime_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_Use24Clock_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_DateFormat_currentIndexChanged()
+{
+    UnlockButtons();
+}
+
+void Config::on_RangeIndicator_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_YearRange_currentIndexChanged()
+{
+    UnlockButtons();
+}
+
+void Config::on_SortByDay_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_ShowTitle_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_AlternateRows_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_AutoLoad_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_RichText_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_Font_currentIndexChanged(){
+
+    UnlockButtons();
+}
+
+void Config::on_FontSize_currentIndexChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_ColorValue_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_BGImage_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_TileBackground_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_Entrylist_Background_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_DBPort_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_DefaultHost_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_DefaultDB_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_DefaultUser_textChanged()
+{
+
+    UnlockButtons();
+}
+
+void Config::on_AllowRoot_clicked()
+{
+    UnlockButtons();
+}
+
+void Config::on_UseSSL_clicked()
+{
+    UnlockButtons();
 }

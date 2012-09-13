@@ -45,5 +45,17 @@
         <file>icons/note_new.gif</file>
         <file>icons/folder_picture.png</file>
         <file>icons/cross.png</file>
+        <file>icons/folder.png</file>
+        <file>icons/robojournal-icon-big.png</file>
+        <file>icons/user.png</file>
+        <file>icons/page_white_stack.png</file>
+        <file>icons/server.png</file>
+        <file>icons/disk.png</file>
+        <file>icons/page_white.png</file>
+        <file>icons/page_white_database.png</file>
+        <file>icons/hourglass.png</file>
+        <file>icons/tag_blue_add.png</file>
+        <file>icons/application_side_contract.png</file>
+        <file>icons/application_side_expand.png</file>
     </qresource>
 </RCC>

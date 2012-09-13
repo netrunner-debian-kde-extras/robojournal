@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+<title>RoboJournal ChangeLog</title>
+<meta name="generator" content="Bluefish 2.0.1" />
+<meta name="author" content="Will Kraft" />
+<meta name="date" content="2012-05-19T15:26:54-0500" />
+<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+<meta http-equiv="content-style-type" content="text/css" />
+<meta http-equiv="expires" content="0" />
+<style type="text/css">
+
+  body{
+    background-color: #1d1d1d;
+  }
+
+  h1{
+    font-family: calibri,arial,sans-serif;
+    font-size: 3.3em;
+    text-align: center;
+  }
+
+  h2{
+    font-family: cambria,times new roman,serif;
+    font-size: 1.8em;
+  }
+
+  li{
+    font-family: calibri,arial,sans-serif;
+    font-size: 1em;
+    padding-top: 0.5em;
+  }
+
+  .odd{
+    background-color: #efefef;
+    padding: 1em;
+    margin: 1em;
+    border: solid 1px gray;
+    border-radius: 20px;
+  }
+
+  .even{
+    padding: 1em;
+    margin: 1em;
+    border: solid 1px gray;
+    border-radius: 20px;
+  }
+
+  ol.letter{
+    list-style-type: lower-alpha;
+  }
+
+  .main{
+    width: 85%;
+    border: solid 1px black;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #ffffff;
+    border-radius: 20px;
+  }
+
+  .footer{
+    margin: 1em;
+  }
+
+  p{
+    font-family: cambria,times new roman,serif;
+    color: #000000;
+    font-size: 1.2em;
+  }
+</style>
+</head>
+<body>
+<div class="main">
+  <h1>RoboJournal ChangeLog</h1>
+  <div class="odd">
+    <h2>Version 0.3</h2>
+    <p>Release Date: 8/28/2012</p>
+    <p>The following changes were made in this release:</p>
+    <ol>
+	  <li>Changed RoboJournal logo image in FirstRun and AboutRJ classes.</li>
+      <li>Fixed bugs in JournalCreator class:
+	<ol class="letter">
+	  <li>Bugfix: System username is now displayed on Linux/Unix systems.</li>
+	  <li>Bugfix: Added more padding below the &quot;Passwords [do not] match&quot; text. This keeps the text from being too close to the bottom of the frame.</li>
+	  <li>Added tooltips to the <b>Journal Name</b>, <b>Journal Host</b>, and <b>Username</b> fields.</li>
+	</ol>
+      </li>
+      <li>Simplified and changed text on FirstRun class UI file. This solves a bug where the intro paragraph text size changed depending on system font size.</li>
+      <li>Added Build Helper Script (for Windows only).</li>
+      <li>Bugfix: Fixed a bug that prevented the current color in use from being autoselected in the Config class color chooser dialog.</li>
+      <li>Bugfix: Fixed incorrect error reporting when journal creation process fails due to a missing Qt MySQL driver.</li>
+      <li>Bugfix: Added an error message that is triggered if you try to create a journal where journal@host already exists.</li>
+      <li>Bugfix: Changed project file to ensure that builds are compiled in release mode by default on Windows systems.</li>
+      <li>Added a shortcut/menu icon (F11) to expand/collapse entry tree.</li>
+      <li>Added a check for Caps Lock to DBLogin class.</li>
+      <li>Changed exit warnings in Editor class.</li>
+      <li>Bugfix: Removed extra padding on MainWindow::Toolbar when buttons are set to image-only.</li>
+      <li>Modified DBLogin Class:
+	<ol class="letter">
+	  <li>Removed root login warning label and replaced it with QMessageBox warnings/errors. This helps reduce crowding/sizing problems on large-text systems.</li>
+	  <li>TextBoxes are set to QLineEdit::ReadOnly instead of QLineEdit::SetDisabled when UseDefaults==true.</li>
+	</ol>
+      </li>
+      <li>Changed  text for error (critical) QMessageBoxes in Editor class.</li>
+      <li>Fixed program icon for Linux systems (previous versions used the too-small Windows icon that looked bad when stretched).</li>
+      <li>Added journal export system to export database entries (or the whole database) to HTML or plain text:
+	<ol class="letter">
+	  <li>Added <b>Save</b> button to toolbar.</li>
+	  <li>Added <b>Save</b> entry and CRTL+S shortcut to <b>File</b> menu.</li>
+	</ol>
+      </li>
+      <li>Removed expand/collapse widget on root node (journal name) in entry tree.</li>
+      <li>Changed MainWindow::Statusbar text:
+	<ol class="letter">
+	  <li>Reworded the welcome message (<em>Click <b>Connect</b> (or press <b>F2</b>) to begin working with a journal database.</em>) and the New Journal message (<em>Welcome to your new journal! Click <b>Write in Journal</b> (or press F4) to get started.</em>).</li>
+	  <li>Separated Username text into its own pane.</li>
+	  <li>Added images to Username and Entry Count panes.</li>
+	</ol>
+      </li>
+      <li>Config class changes:
+	<ol class="letter">
+	  <li>Enlarged Config window to reduce crowding in some GNOME setups.</li>
+	  <li>Added Apply button to Config::QDialogButtonBox.</li>
+	  <li>Made auto-load feature a config menu option. This lets the user decide if he/she wants the most recent entry to load automatically after login.</li>
+	</ol>
+      </li>
+      <li>Added tagging system (<i>Tagger</i> class):
+	<ol class="letter">
+	  <li>Modified MySQLCore::Update() to prevent NULL data from being written to the <i>tags</i> column in database <i>entries</i> table.</li>
+	</ol>
+      </li>
+      <li>Added <em>JournalSelector</em> class:
+	<ol class="letter">
+	  <li><em>FirstRun</em> class now calls <em>JournalSelector</em> if user decides to use existing journal during config.</li>
+	  <li>Added a private function that executes a SHOW DATABASES tranaction to <em>MySQLCore</em> class.</li>
+	</ol>
+      </li>
+      <li>Changed window icon to <em>database_add.png</em> in <em>JournalCreator</em> class.</li>
+      <li>Rewrote changelog.html from scratch to be XHTML 1.0 compliant.</li>
+      <li>Replaced original compile/installation documentation (INSTALL-GUIDE-r3.htm) with an XHTML 1.0 compliant document (compile-instructions.xhtml).</li>
+    </ol>
+  </div>
+
+  <div class="even">
+    <h2>Version 0.2.1</h2>
+    <p>Release Date: 5/11/2012</p>
+    <p >The following changes were made in this release:</p>
+      <ol>
+	<li>Added "make install" and "make uninstall" support for Linux/OS X (RoboJournal gets installed to /usr/local/bin).</li>
+	<li>Added Linux/OS X installation instructions to
+	<i>INSTALL-GUIDE-r3.htm</i>.</li>
+	<li>Reformatted Changelog.htm to pass HTML 4.01/STRICT.</li>
+	<li>Removed MySQL header dependencies in source to ensure full GPL3 compliance.</li>
+	<li>Removed unnecessary source and header references to <i>QtSql/QMYSQLDriver</i> and <i>QtSql/QPSQLDriver</i>. At this moment, <i>QtSql/QSqlDatabase</i> is all that is needed.</li>
+	<li>Removed unnecessary reference to <i>CONFIG += qsqlmysql</i> from robojournal.pro.</li>
+	<li>Removed unused/legacy code (headers, cpp, and ui) from source package.</li>
+      </ol>
+  </div>
+
+  <div class="odd">
+    <h2>Version 0.2</h2>
+    <p> Release Date:
+    4/16/2012</p>
+    <p>The following changes were made in this release:</p>
+    <ol>
+      <li>Added Time support:
+	<ol class="letter">
+	  <li>Added  24-hour clock support.</li>
+	</ol>
+      </li>
+      <li>Added database upgrade tool (MainWindow::UpgradeJournal() function).</li>
+      <li>Added tool to modify journal databases by adding additional column for time.</li>
+      <li>Added upgrade check when journals are loaded.</li>
+      <li>Added document theming support.</li>
+      <li>Font and font size:
+	<ol class="letter">
+	  <li>Font color.</li>
+	  <li>Background image support on viewer and entry tree panes.</li>
+	  <li>Tile background image.</li>
+	</ol>
+      </li>
+      <li>Improved date formatting:
+	<ol class="letter">
+	  <li>Added the ability to format date according to USA, European, or ISO-8601 format.</li>
+	  <li>Added date format example.</li>
+	</ol>
+      </li>
+      <li>Modified <em>Config</em> class:
+	<ol class="letter">
+	  <li>Added Journal and <i>Appearance</i> tabs.</li>
+	  <li>Moved Journal-related features to <i>Journal</i> tab.</li>
+	  <li>Placed theme-related options on <i>Appearance</i> tab.</li>
+	  <li>Removed icons from original <i>General</i> and <i>Database</i> tabs.</li>
+	  <li>Added an option to disable alternate row colors.</li>
+	  <li>Added the ability to toggle text on toolbar icons.</li>
+	  <li>Changed wording on toolbar docking default option label.</li>
+	  <li>Moved <i>Entry Range </i>group to Journal tab from
+	  <i>General</i> tab.</li>
+	  <li>Added placeholder checkbox for rich text format (Disabled, not yet implemented).</li>
+	</ol>
+      </li>
+      <li>Sort by day is no longer default behavior.</li>
+      <li>Fixed window parent bug (that caused centering issues) on <em>DBLogin</em>, <em>Config</em>, <em>AboutRJ</em>, and <em>Editor</em> classes.</li>
+      <li>Added exit confirmation dialogs for <em>Editor</em> and <em>MainWindow</em> classes.</li>
+      <li>Added print support for journal entries.</li>
+      <li>Changed previous/next shortcut keys to left arrow/ right arrow.</li>
+    </ol>
+  </div>
+
+  <div class="even">
+    <h2>Version 0.1</h2>
+    <p> Release Date: 2/13/2012</p>
+    <ol>
+    <li>Initial release.</li>
+    </ol>
+  </div>
+  <div class="footer">
+    <small>This file is part of RoboJournal. You may download RoboJournal source
+    and binaries from
+    <a
+    href="http://www.sourceforge.net/projects/robojournal">http://www.sourceforge.
+    net/projects/robojournal</a>.</small><br /><br />
+
+    <a href="http://validator.w3.org/check?uri=referer"><img src="http://www.w3.org/Icons/valid-xhtml10" alt="Valid XHTML 1.0 Strict"
+    height="31" width="88" /></a>
+
+    <a href="http://jigsaw.w3.org/css-validator/check/referer">
+    <img style="border:0;width:88px;height:31px" src="http://jigsaw.w3.org/css-validator/images/vcss" alt="Valid CSS!" />
+    </a>
+  </div>
+</div>
+</body>
+</html>

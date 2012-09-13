@@ -32,7 +32,6 @@
 #include "ui_config.h"
 #include <QtSql/QSqlDatabase>
 #include "configmanager.h"
-//#include <QDebug>
 #include "psqlcore.h"
 #include <QMessageBox>
 #include "mysqlcore.h"
@@ -52,6 +51,122 @@
 #include <QPrinter>
 #include <QPrintDialog>
 #include <QAbstractButton>
+#include "tagger.h"
+#include "ui_tagger.h"
+#include "journalcreator.h"
+#include "ui_journalcreator.h"
+#include "journalselector.h"
+#include "ui_journalselector.h"
+#include "entryexporter.h"
+#include "ui_entryexporter.h"
+#include "ui_firstrun.h"
+#include "firstrun.h"
+
+// Launch Entry Exporter
+//################################################################################################
+void MainWindow::ExportEntry(){
+    if(CurrentID!="-1"){
+        QTreeWidgetItem *selected=ui->EntryList->currentItem();
+        EntryExporter e(this);
+        EntryExporter::title=selected->text(0);
+        e.setWindowTitle("Export Content");
+        e.exec();
+    }
+}
+
+// feed in raw tag data from the database and return the formatted string
+//################################################################################################
+QString MainWindow::FormatTags(QString tags, QString color1, QString color2){
+
+    QStringList tags_array=tags.split(";");
+    QString output_tags;
+    bool has_tags=true;
+
+    for(int i=0; i<tags_array.size(); i++){
+        QString nexttag=tags_array.at(i);
+
+        nexttag="<small><nobr><img src=\":/icons/tag_orange.png\">&nbsp;" + nexttag + "</nobr></small>&nbsp;&nbsp;";
+
+        output_tags=output_tags+nexttag;
+
+        if((tags_array.at(0)=="Null") || (tags_array.at(0)=="null")){
+            has_tags=false;
+        }
+
+    }
+
+    if(Buffer::use_custom_theme){
+        color1=Buffer::text_hexcolor;
+        color2=InvertColor(Buffer::text_hexcolor);
+    }
+
+    QString div="<div style=\"background-color: " + color1 + "; color: " +
+            color2 + "; width=100%;\"><small>&nbsp;&nbsp;Tags</small></div><br>";
+
+    if(has_tags){
+        // add HR
+        output_tags= div + "&nbsp;&nbsp;" + output_tags;
+    }
+    else{
+        output_tags= div + "&nbsp;&nbsp;<small>This entry has not yet been tagged.</small>";
+    }
+
+    if(tags_array.at(0).isEmpty()){
+        output_tags= div + "&nbsp;&nbsp;<small>No tags for this post.</small>";
+    }
+
+
+    return output_tags;
+}
+
+// Launch Tagger function
+//################################################################################################
+void MainWindow::Tag(){
+    using namespace std;
+    QTreeWidgetItem *selected=ui->EntryList->currentItem();
+
+    // fixes crash that occurs when a null selection is passed to Tagger
+    if(selected !=NULL){
+
+        QString title=selected->text(0);
+
+        // sort by day causes problems with using regex
+        if(Buffer::sortbyday){
+            // so we do nothing because title should stay as it is
+        }
+        else{
+            // truncate date from front of title
+            int startpoint=title.indexOf(":")+2;
+            title=title.section("",startpoint,title.size());
+            title=title.trimmed();
+        }
+
+        // pass title and id to Tagger class
+        Tagger::title=title;
+        Tagger::id_num=selected->text(1);
+
+        // prevent Tagger from opening when we are positioned on a non-entry or DB title
+        // after all, we don't want to tag those things.
+        if((CurrentID != "-1") && (title != Buffer::database_name)){
+
+            // pass title and id to Tagger class
+            Tagger::title=title;
+            Tagger::id_num=selected->text(1);
+
+            Tagger t(this);
+            t.setWindowTitle("Manage Tags");
+            t.exec();
+
+            // refresh entry
+            GetEntry(CurrentID);
+        }
+        else{
+            cout << "OUTPUT: Tagging not allowed on invalid record!" << endl;
+        }
+    }
+
+
+}
 
 //################################################################################################
 // Confirm the user's intention to quit the program. This function replaces Quit();
@@ -124,7 +239,6 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
 
 
-
     // Set current version in TitleBar
     this->setWindowTitle("RoboJournal " + Buffer::version);
 
@@ -148,9 +262,9 @@ QString MainWindow::CreateStyleSheet(bool for_entrylist, bool is_TextEdit){
         if(is_TextEdit){
             stylelist.append("QTextEdit { ");
         }
-//        else{
-//            stylelist.append("QTreeWidget { ");
-//        }
+        //        else{
+        //            stylelist.append("QTreeWidget { ");
+        //        }
 
         // create style for QTextEdit
 
@@ -224,7 +338,7 @@ void MainWindow::UpgradeJournal(){
         }
         else{
             m.information(this,"RoboJournal", "<b>" + Buffer::database_name +
-                          "</b> has been upgraded successfully. Click <b>Connect</b> (or hit F2) to log in.");
+                          "</b> has been upgraded successfully. Click the <b>Connect</b> button (or press F2) to log in.");
             cout << "DONE!" << endl;
         }
     }
@@ -313,39 +427,43 @@ void MainWindow::Decorate_GUI(){
 
     // remove icon labels if user doesn't want them
     if(!Buffer::show_icon_labels){
-        ui->ConnectButton->setText("");
-        ui->DisconnectButton->setText("");
-        ui->LastEntry->setText("");
-        ui->WriteButton->setText("");
-        ui->EditEntryButton->setText("");
-        ui->DeleteEntry->setText("");
-        ui->NextEntry->setText("");
-        ui->TodayButton->setText("");
-        ui->ConfigButton->setText("");
+        ui->ConnectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->DisconnectButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->LastEntry->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->WriteButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->EditEntryButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->DeleteEntry->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->NextEntry->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->TodayButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->ConfigButton->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->Tag->setToolButtonStyle(Qt::ToolButtonIconOnly);
+        ui->ExportEntry->setToolButtonStyle(Qt::ToolButtonIconOnly);
     }
     else{ // restore values in case user wishes to enable them at runime
-        ui->ConnectButton->setText("Connect");
-        ui->DisconnectButton->setText("Disconnect");
-        ui->LastEntry->setText("Previous");
-        ui->WriteButton->setText("Write in Journal");
-        ui->EditEntryButton->setText("Modify Entry");
-        ui->DeleteEntry->setText("Delete Entry");
-        ui->NextEntry->setText("Next");
-        ui->TodayButton->setText("Latest");
-        ui->ConfigButton->setText("Preferences");
+        ui->ConnectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->DisconnectButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->LastEntry->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->WriteButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->EditEntryButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->DeleteEntry->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->NextEntry->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->TodayButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->ConfigButton->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->Tag->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
+        ui->ExportEntry->setToolButtonStyle(Qt::ToolButtonTextBesideIcon);
     }
 
     if(Buffer::use_custom_theme){
 
 
-         QString stylesheet=CreateStyleSheet(false,true);
+        QString stylesheet=CreateStyleSheet(false,true);
 
-         ui->Output->setStyleSheet(stylesheet);
+        ui->Output->setStyleSheet(stylesheet);
 
-         if(Buffer::set_tree_background){
-             stylesheet=CreateStyleSheet(true,false);
-             ui->EntryList->setStyleSheet(stylesheet);
-         }
+        if(Buffer::set_tree_background){
+            stylesheet=CreateStyleSheet(true,false);
+            ui->EntryList->setStyleSheet(stylesheet);
+        }
 
     }
     // clear all styles if the user disables them during runtime
@@ -362,7 +480,7 @@ void MainWindow::Decorate_GUI(){
 // this function will eventually launch the help file. Right now, just show a warning message.
 void MainWindow::ShowHelp(){
     QMessageBox b;
-    b.critical(this,"RoboJournal","The help file is not available in this release. It will be included in RoboJournal 0.3");
+    b.critical(this,"RoboJournal","The help file is not available in this release. It will be included in RoboJournal 0.4. ");
 }
 
 
@@ -378,8 +496,16 @@ void MainWindow::GetEntry(QString id){
         QString entry=my.RetrieveEntry(id);
         QString datestamp=my.TimeStamp(id);
 
+
+
+        // pass ddatestamp to global date variable. We need this for the EntryExporter class.
+        Global_Datestamp=datestamp;
+
         // convert plain text linebreaks to html
         entry.replace("\n","<br>");
+
+        // trim whitespace from entry
+        entry=entry.simplified();
 
         // find and use system colors
         QPalette pal;
@@ -403,6 +529,12 @@ void MainWindow::GetEntry(QString id){
             QString timestamp=my.GetTimestamp(Record);
             //cout << "Record: " + Record.toStdString() << endl;
 
+            // get tags
+            QString tags=my.GetTags(Record);
+
+            //format tags
+            QString output_tags=FormatTags(tags, color1,color2);
+
 
             // get title if buffer has it
             if(Buffer::show_title){
@@ -416,7 +548,7 @@ void MainWindow::GetEntry(QString id){
                     text= title + "<div style=\"background-color:" + Buffer::text_hexcolor + ";  color: " +
                             invertcolor +"; width=100%;\"><small>&nbsp;&nbsp;On " +
                             datestamp + " at "+ timestamp + ",  " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags + "</div>";
 
                 }
                 else{
@@ -424,7 +556,7 @@ void MainWindow::GetEntry(QString id){
                     text= title + "<div style=\"background-color:" + color1 + "; margin: -3px; color: " +
                             color2 +"; width=100%; \"><small>&nbsp;&nbsp; On " +
                             datestamp + " at "+ timestamp + ", " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags + "</div>";
                 }
             }
             // do not show title
@@ -435,7 +567,7 @@ void MainWindow::GetEntry(QString id){
                     text="<div style=\"background-color:" + Buffer::text_hexcolor + "; margin: -3px; color: " +
                             invertcolor +"; width=100%; padding: 20px 80px;\"><small>&nbsp;&nbsp; On " +
                             datestamp + " at "+ timestamp + ", " + Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags +  "</div>";
 
                 }
                 else{
@@ -443,22 +575,34 @@ void MainWindow::GetEntry(QString id){
                     text="<div style=\"background-color:" + color1 + "; margin: -3px; color: " +
                             color2 +"; width=100%; padding: 20px 80px;\"><small>&nbsp;&nbsp; On " +
                             datestamp + " at "+ timestamp + ", " +  Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags + "</div>";
                 }
-
             }
 
+            // pass values to entry exporter
+            current_entry_date=datestamp;
+            current_entry_body=entry;
+            current_entry_time=timestamp;
         }
 
-
         //no timestamp
+
+
 
         else{
             // get title if buffer has it
             if(Buffer::show_title){
 
+                // get tags
+                QString tags=my.GetTags(Record);
+
+                //format tags
+                QString output_tags=FormatTags(tags,color1,color2);
+
                 QString title=my.GetTitle(id);
                 title="<h2>" + title + "</h2>";
+
+
 
                 if(Buffer::use_custom_theme){
                     QString invertcolor=InvertColor(Buffer::text_hexcolor);
@@ -466,7 +610,7 @@ void MainWindow::GetEntry(QString id){
                     text= title + "<div style=\"background-color:" + Buffer::text_hexcolor + "; margin: -3px; color: " +
                             invertcolor +"; width=100%; \"><small>&nbsp;&nbsp; On " +
                             datestamp + ", " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags + "</div>";
 
                 }
                 else{
@@ -474,18 +618,25 @@ void MainWindow::GetEntry(QString id){
                     text= title + "<div style=\"background-color:" + color1 + "; margin: -3px; color: " +
                             color2 +"; width=100%; \"><small>&nbsp;&nbsp; On " +
                             datestamp + ", " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags  + "</div>";
                 }
             }
             // do not show title
             else{
+
+                // get tags
+                QString tags=my.GetTags(Record);
+
+                //format tags
+                QString output_tags=FormatTags(tags,color1,color2);
+
                 if(Buffer::use_custom_theme){
                     QString invertcolor=InvertColor(Buffer::text_hexcolor);
 
                     text="<div style=\"background-color:" + Buffer::text_hexcolor + "; margin: -3px; color: " +
                             invertcolor +"; width=100%; \"><small>&nbsp;&nbsp; On " +
                             datestamp + ", " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags  + "</div>";
 
                 }
                 else{
@@ -493,45 +644,86 @@ void MainWindow::GetEntry(QString id){
                     text="<div style=\"background-color:" + color1 + "; margin: -3px; color: " +
                             color2 +"; width=100%; \"><small>&nbsp;&nbsp; On " +
                             datestamp + ", " +   Buffer::username +
-                            " wrote:</small></div><div><br>" + entry + "</div>";
+                            " wrote:</small></div><div><br>" + entry + "<br>" + output_tags  + "</div>";
                 }
 
             }
+
+            // pass values to entry exporter
+            current_entry_date=datestamp;
+            current_entry_body=entry;
+
 
         }
 
         // set entry text
         ui->Output->setText(text);
+
+
+
+        // Update EntryExporter class
+
+        QTreeWidgetItem *selected=ui->EntryList->currentItem();
+
+        // Bugfix 6/29/12: Prevent segfault after editing an entry. The reason for the bug
+        //is that selected returned null.
+
+        if(selected != NULL){
+            QString entrytitle=selected->text(0);
+            QString timestamp=my.GetTimestamp(Record);
+
+            EntryExporter e;
+            e.UpdateValues(entrytitle,datestamp,entry,timestamp);
+
+
+        }
     }
 }
 
 //################################################################################################
 // Function that sets up main window GUI when mainwindow is called at startup
 void MainWindow::PrimaryConfig(){
+
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon-big.png");
+    this->setWindowIcon(unixicon);
+
+#endif
+
+
+    ui->actionEntry_List->setChecked(true);
+
     switch(Buffer::toolbar_pos){
 
-        case 0:
-            this->addToolBar(Qt::LeftToolBarArea,ui->mainToolBar);
+    case 0:
+        this->addToolBar(Qt::LeftToolBarArea,ui->mainToolBar);
         break;
 
-        case 1:
-            this->addToolBar(Qt::TopToolBarArea,ui->mainToolBar);
+    case 1:
+        this->addToolBar(Qt::TopToolBarArea,ui->mainToolBar);
         break;
 
-        case 2:
-            this->addToolBar(Qt::RightToolBarArea,ui->mainToolBar);
+    case 2:
+        this->addToolBar(Qt::RightToolBarArea,ui->mainToolBar);
         break;
     }
+
+
 
 
 
     // Setup Statusbar
     ui->TotalCount->clear();
     ui->statusBar->addWidget(ui->StatusMessage,1);
+
+    // New in 0.3: User notification is a separate statusbar object.
+    ui->statusBar->addPermanentWidget(ui->Status_User,0);
+    ui->Status_User->clear();
+
     ui->statusBar->addPermanentWidget(ui->TotalCount,0);
 
 
-    // setup toolbars
+    // setup toolbars. Buttons will be added in the order listed here.
     ui->mainToolBar->addWidget(ui->ConnectButton);
     ui->mainToolBar->addWidget(ui->DisconnectButton);
     ui->mainToolBar->addSeparator();
@@ -544,6 +736,7 @@ void MainWindow::PrimaryConfig(){
     ui->mainToolBar->addWidget(ui->WriteButton);
     ui->mainToolBar->addWidget(ui->EditEntryButton);
 
+
     // This function should be invisible in the beta until the feature is fully built
     ui->SearchButton->setVisible(false);
 
@@ -554,6 +747,8 @@ void MainWindow::PrimaryConfig(){
 
 
     ui->mainToolBar->addWidget(ui->DeleteEntry);
+    ui->mainToolBar->addWidget(ui->Tag);
+    ui->mainToolBar->addWidget(ui->ExportEntry);
 
     ui->mainToolBar->addSeparator();
     ui->mainToolBar->addWidget(ui->ConfigButton);
@@ -561,7 +756,8 @@ void MainWindow::PrimaryConfig(){
 
     ui->WriteButton->setDisabled(true);
     ui->actionPrint->setDisabled(true);
-
+    ui->Tag->setDisabled(true);
+    ui->ExportEntry->setDisabled(true);
     ui->NextEntry->setDisabled(true);
     ui->LastEntry->setDisabled(true);
     ui->TodayButton->setDisabled(true);
@@ -569,7 +765,7 @@ void MainWindow::PrimaryConfig(){
     ui->DeleteEntry->setDisabled(true);
     ui->EditEntryButton->setDisabled(true);
     ui->DisconnectButton->setDisabled(true);
-
+    ui->actionManage_Tags_2->setDisabled(true);
     ui->actionLatest_Entry->setDisabled(true);
     ui->actionNext_Entry->setDisabled(true);
     ui->actionPrevious_Entry->setDisabled(true);
@@ -577,10 +773,11 @@ void MainWindow::PrimaryConfig(){
     ui->actionWrite->setDisabled(true);
     ui->actionDelete_Current_Entry->setDisabled(true);
     ui->actionEdit_Selected_Entry->setDisabled(true);
+    ui->actionExport_Entry->setDisabled(true);
 
     QPixmap noicon("qrc:///icons/database_error.png");
     ui->StatusMessage->setPixmap(noicon);
-    ui->StatusMessage->setText("Click <b>Connect</b> (or hit <b>F2</b>) to begin working with a journal database.");
+    ui->StatusMessage->setText("Click the <b>Connect</b> button (or press <b>F2</b>) to work with a journal database.");
 
     ui->EntryList->setColumnWidth(0,450);
 
@@ -599,6 +796,11 @@ void MainWindow::PrimaryConfig(){
 
     //Decorate the GUI
     Decorate_GUI();
+
+    // Constructor for testing FirstRun, comment out the next two lines in production builds
+    //FirstRun f;
+    //f.exec();
+
 }
 
 //################################################################################################
@@ -636,9 +838,10 @@ void MainWindow::Connect(){
                 // If you're using a static build of QT you're probably never going to see this error
                 if(!my.db.isDriverAvailable("QMYSQL")){
                     this->setCursor(Qt::ArrowCursor);
-                   QMessageBox j;
-                   j.critical(this,"Database Error","The MySQL driver (QT 4.7) is not installed correctly! RoboJournal"
-                              " will not be able to use MySQL databases until this problem is fixed.");
+                    QMessageBox j;
+                    j.critical(this,"RoboJournal","The Qt MySQL driver is not available! The most likely cause "
+                               " for this problem is that Qt was not built correctly or is incomplete. RoboJournal"
+                               " will not be able to use MySQL databases until this problem is fixed.");
                 }
 
                 // if the user got this far, the driver is good but there was a different problem encountered
@@ -646,12 +849,20 @@ void MainWindow::Connect(){
                 if(my.db.isOpenError()){
                     this->setCursor(Qt::ArrowCursor);
                     QMessageBox m;
-                    QString reason="<ul><li><li>Make sure that you are authorized to access <b>" +
-                            Buffer::database_name + "</b> from this workstation.<li>Make sure the port, username," +
-                            " and password you provided are correct.</ul>Please check and/or rectify these problems and try again.";
-                    m.critical(this,"Connection Error","Connection attempt with <b>" +
-                               Buffer::database_name + "</b> on <b>" +
-                               Buffer::host + "</b> failed." + reason );
+
+                    QString reason;
+
+                    if((Buffer::host=="localhost") || (Buffer::host=="127.0.0.1")){
+                        reason="Make sure you entered the correct username/password and try again.";
+                    }
+                    else{
+                        reason="Are you allowed to access <b>" + Buffer::database_name +
+                                "</b> from this computer? If so, make sure you entered the correct username/password and try again.";
+                    }
+
+                    m.critical(this,"RoboJournal","RoboJournal could not connect to  <b>" +
+                               Buffer::database_name + "</b>@<b>" +
+                               Buffer::host + "</b>.<br><br>" + reason );
 
                     // allow user to try again
                     l.ResetPassword();
@@ -672,8 +883,8 @@ void MainWindow::Connect(){
                         u.setIcon(QMessageBox::Question);
                         u.setWindowTitle("Journal Upgrade Required");
                         u.setText("<b>" + Buffer::database_name + "</b> is a valid journal but it must be upgraded before RoboJournal "
-                        + Buffer::version + " can use it. After this journal has been upgraded to the new format, it will no longer be "
-                        "compatible with older versions of RoboJournal.<br><br> Do you want to upgrade this journal now?");
+                                  + Buffer::version + " can use it. After this journal has been upgraded to the new format, it will no longer be "
+                                  "compatible with older versions of RoboJournal.<br><br> Do you want to upgrade this journal now?");
 
                         u.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
                         u.setDefaultButton(QMessageBox::Yes);
@@ -697,7 +908,7 @@ void MainWindow::Connect(){
                     // or because it is just 100% invalid due to structure
                     else{
                         QMessageBox m;
-                        m.critical(this,"Integrity Error","Database <b>" + Buffer::database_name +
+                        m.critical(this,"RoboJournal","Database <b>" + Buffer::database_name +
                                    "</b> is not a valid journal!");
 
                         cout << "ERROR: Database " << Buffer::database_name.toStdString() <<
@@ -726,9 +937,12 @@ void MainWindow::Connect(){
                     ui->actionDelete_Current_Entry->setEnabled(true);
                     ui->actionEdit_Selected_Entry->setEnabled(true);
                     ui->actionPrint->setEnabled(true);
-
+                    ui->Tag->setEnabled(true);
+                    ui->ExportEntry->setEnabled(true);
+                    ui->actionManage_Tags_2->setEnabled(true);
                     ui->actionConnect->setDisabled(true);
                     ui->ConnectButton->setDisabled(true);
+                    ui->actionExport_Entry->setEnabled(true);
 
                     // Get ID list
                     int year_range=Buffer::entryrange.toInt();
@@ -736,9 +950,13 @@ void MainWindow::Connect(){
 
                     CreateTree();
                     ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-                    Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-                    Buffer::username + "\"</b>");
+                                               Buffer::database_name + "</b> on <b>" +  Buffer::host);
 
+                    // provide user notification on statusbar (new for 0.3)
+                    ui->Status_User->setTextFormat(Qt::RichText);
+                    ui->Status_User->setAlignment(Qt::AlignHCenter | Qt::AlignTop);
+                    ui->Status_User->setText("&nbsp;<img src=\":/icons/user.png\">&nbsp;" + Buffer::username + "&nbsp;&nbsp;");
+                    ui->Status_User->setToolTip("Logged in as \"" + Buffer::username + "\"");
                     is_connected=true;
 
                 }
@@ -772,7 +990,7 @@ void MainWindow::Connect(){
 
                 ui->ConnectButton->setDisabled(true);
                 ui->StatusMessage->setText("Connected to <b>" + Buffer::database_name + "</b> on <b>" +
-                Buffer::host + "</b> as user <b>\"" + Buffer::username + "\"</b>");
+                                           Buffer::host);
             }
 
         }
@@ -801,7 +1019,7 @@ void MainWindow::Connect(){
 
             ui->ConnectButton->setDisabled(true);
             ui->StatusMessage->setText("Connected to <b>" + Buffer::database_name + "</b> on <b>" +
-            Buffer::host + "</b> as user <b>\"" + Buffer::username + "\"</b>");
+                                       Buffer::host);
         }
 
 
@@ -828,8 +1046,12 @@ void MainWindow::Connect(){
         ui->LastEntry->setEnabled(true);
         ui->TodayButton->setEnabled(true);
 
-        MostRecent();
-        Record=CurrentID;
+
+        // only load most recent entry if config allows it
+        if(Buffer::autoload){
+            MostRecent();
+            Record=CurrentID;
+        }
     }
     // if there are no entries at login, disable a few buttons to prevent crashes
     else{
@@ -848,7 +1070,7 @@ void MainWindow::Connect(){
         }
 
     }
- }
+}
 
 //################################################################################################
 /*
@@ -856,6 +1078,7 @@ void MainWindow::Connect(){
 
   */
 void MainWindow::Modify(){
+    using namespace std;
 
     if(CurrentID != "-1"){
 
@@ -868,12 +1091,13 @@ void MainWindow::Modify(){
         // Update Tree
         CreateTree();
 
+
         // refresh entry in Output Pane
         GetEntry(CurrentID);
 
+
         ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-        Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-        Buffer::username + "\"</b>");
+                                   Buffer::database_name + "</b> on <b>" +  Buffer::host);
 
         // keep current entry selected
         HighlightCurrentSelection(CurrentID);
@@ -886,6 +1110,8 @@ void MainWindow::Modify(){
 
     }
 }
+
+
 //################################################################################################
 // Delete an entry
 void MainWindow::DeleteSelectedEntry(){
@@ -898,21 +1124,25 @@ void MainWindow::DeleteSelectedEntry(){
         if(Buffer::showwarnings){
             QMessageBox b;
             int choice=b.question(this,"Delete entry?","Do you really want to delete the selected journal entry?"
-            " This action can't be undone.",QMessageBox::Cancel,QMessageBox::Ok);
+                                  " This action can't be undone.",QMessageBox::Cancel,QMessageBox::Ok);
 
             switch(choice){
-                case QMessageBox::Ok:
-                    if(Buffer::backend=="MySQL"){
-                        my.DeleteEntry(CurrentID);
-                        CreateTree();
-                        ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-                        Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-                        Buffer::username + "\"</b>");
-                        ui->Output->setPlainText(NULL);
-                    }
+            case QMessageBox::Ok:
+                if(Buffer::backend=="MySQL"){
+                    my.DeleteEntry(CurrentID);
+                    CreateTree();
+
+                    ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
+                                               Buffer::database_name + "</b> on <b>" +  Buffer::host);
+                    ui->Output->setPlainText(NULL);
+
+                    // Bugfix (8/15/12) prevent the deleter from being used again until a different node is clicked
+                    CurrentID = -1;
+                    ui->EntryList->clearSelection();
+                }
                 break;
 
-                case QMessageBox::Cancel:
+            case QMessageBox::Cancel:
                 // do nothing
                 break;
 
@@ -924,15 +1154,24 @@ void MainWindow::DeleteSelectedEntry(){
                 my.DeleteEntry(CurrentID);
                 CreateTree();
                 ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-                Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-                Buffer::username + "\"</b>");
+                                           Buffer::database_name + "</b> on <b>" +  Buffer::host);
                 ui->Output->setPlainText(NULL);
+
+                // Bugfix (8/15/12) prevent the deleter from being used again until a different node is clicked
+                CurrentID = -1;
+                ui->EntryList->clearSelection();
             }
         }
 
-
-
+        //Disable the Tagger and Exporter momentarily because RJ will crash if people click on these w/o
+        // an entry selected.
+        // bugfix (8/27/12) Prevent crash by disabling the tagger and entryexporter after posting an entry.
+        ui->Tag->setDisabled(true);
+        ui->ExportEntry->setDisabled(true);
+        ui->actionManage_Tags_2->setDisabled(true);
+        ui->actionExport_Entry->setDisabled(true);
     }
+
 }
 
 //################################################################################################
@@ -948,14 +1187,15 @@ void MainWindow::Disconnect(){
 
     ui->NextEntry->setDisabled(true);
     ui->LastEntry->setDisabled(true);
-
+    ui->Tag->setDisabled(true);
+    ui->actionManage_Tags_2->setDisabled(true);
     ui->TodayButton->setDisabled(true);
     ui->SearchButton->setDisabled(true);
     ui->DeleteEntry->setDisabled(true);
     ui->EditEntryButton->setDisabled(true);
     ui->DisconnectButton->setDisabled(true);
     ui->ConnectButton->setEnabled(true);
-
+    ui->ExportEntry->setDisabled(true);
     ui->Output->setText(NULL);
     ui->EntryList->clear();
 
@@ -970,7 +1210,7 @@ void MainWindow::Disconnect(){
     ui->EntryList->setHeaderHidden(true);
     ui->actionWrite->setDisabled(true);
     ui->actionPrint->setDisabled(true);
-
+    ui->actionExport_Entry->setDisabled(true);
 
     // Clear the ID list so we don't have data from previous connections on it. That sure would cause problems....
     IDList.clear();
@@ -982,6 +1222,9 @@ void MainWindow::Disconnect(){
     ui->StatusMessage->setText("Terminated connection with <b>" + Buffer::host + "</b>");
     ui->TotalCount->clear();
     ui->TotalCount->setToolTip(NULL);
+
+    ui->Status_User->clear();
+
 }
 
 //################################################################################################
@@ -989,17 +1232,7 @@ void MainWindow::Disconnect(){
 void MainWindow::Preferences(){
     Config c(this);
     c.setWindowTitle("RoboJournal Preferences");
-
-//    if(!this->isMaximized()){
-//        int posX=this->x()+200;
-//        int posY=this->y()+80;
-//        //c.move(posX,posY);
-//    }
-
-
     c.exec();
-
-
 
     if(c.MadeChanges){
         ConfigManager cm;
@@ -1008,23 +1241,22 @@ void MainWindow::Preferences(){
         if(!ConnectionActive && ui->DisconnectButton->isEnabled()){
             CreateTree();
             ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-            Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-            Buffer::username + "\"</b>");
+                                       Buffer::database_name + "</b> on <b>" +  Buffer::host);
         }
 
         // Setup toolbar position again in case user changed it
         switch(Buffer::toolbar_pos){
 
-            case 0:
-                this->addToolBar(Qt::LeftToolBarArea,ui->mainToolBar);
+        case 0:
+            this->addToolBar(Qt::LeftToolBarArea,ui->mainToolBar);
             break;
 
-            case 1:
-                this->addToolBar(Qt::TopToolBarArea,ui->mainToolBar);
+        case 1:
+            this->addToolBar(Qt::TopToolBarArea,ui->mainToolBar);
             break;
 
-            case 2:
-                this->addToolBar(Qt::RightToolBarArea,ui->mainToolBar);
+        case 2:
+            this->addToolBar(Qt::RightToolBarArea,ui->mainToolBar);
             break;
         }
     }
@@ -1032,18 +1264,26 @@ void MainWindow::Preferences(){
     //Re-decorate the GUI
     Decorate_GUI();
 
+    //Disable the Tagger and Exporter momentarily because RJ will crash if people click on these w/o
+    // an entry selected.
+    // bugfix (8/15/12) Prevent crash by disabling the tagger and entryexporter after posting an entry.
+    ui->Tag->setDisabled(true);
+    ui->ExportEntry->setDisabled(true);
+    ui->actionManage_Tags_2->setDisabled(true);
+    ui->actionExport_Entry->setDisabled(true);
 }
+
 //################################################################################################
 // show credits window
 void MainWindow::ShowCredits(){
     AboutRJ a(this);
 
-  int width=a.width();
-  int height=a.height();
-  a.setMaximumSize(width, height);
-  a.setMinimumSize(width, height);
-  a.setWindowTitle("About RoboJournal");
-  a.exec();
+    int width=a.width();
+    int height=a.height();
+    a.setMaximumSize(width, height);
+    a.setMinimumSize(width, height);
+    a.setWindowTitle("About RoboJournal");
+    a.exec();
 }
 
 //################################################################################################
@@ -1072,8 +1312,14 @@ void MainWindow::Write(){
 
     // Reset Status bar message
     ui->StatusMessage->setText("Connected to " + Buffer::backend  + " database <b>" +
-    Buffer::database_name + "</b> on <b>" +  Buffer::host + "</b> as user <b>\"" +
-    Buffer::username + "\"</b>");
+                               Buffer::database_name + "</b> on <b>" +  Buffer::host);
+
+    // bugfix (8/15/12) Prevent crash by disabling the tagger and entryexporter after posting an entry.
+	// the app will segfault if the user clicks on those buttons if there's no entry selected.
+    ui->Tag->setDisabled(true);
+    ui->ExportEntry->setDisabled(true);
+    ui->actionManage_Tags_2->setDisabled(true);
+    ui->actionExport_Entry->setDisabled(true);
 }
 
 //################################################################################################
@@ -1083,17 +1329,115 @@ void MainWindow::HighlightCurrentSelection(QString CurrentID){
     ui->EntryList->clearSelection();
     QTreeWidgetItemIterator it(ui->EntryList,QTreeWidgetItemIterator::NoChildren);
 
-        while (*it) {
-            if ((*it)->text(1) == CurrentID)
-                (*it)->setSelected(true);
-                ++it;
+    while (*it) {
+        if ((*it)->text(1) == CurrentID)
 
-                // Make sure CurrentID always reflects current highlighted index
-                // This is necessary in case the user wants to edit an entry
-                this->CurrentID=CurrentID;
+            (*it)->setSelected(true);
+
+        ++it;
+
+        // Make sure CurrentID always reflects current highlighted index
+        // This is necessary in case the user wants to edit an entry
+
+        this->CurrentID=CurrentID;
+    }
+
+    // make sure that the currentitem and selecteditem are always the same.
+    // if not, the Entryexporter and Tagger usually get out of sync with the entry being viewed.
+    QList<QTreeWidgetItem *> current=ui->EntryList->selectedItems();
+    ui->EntryList->setCurrentItem(current[0]);
+
+    QTreeWidgetItem *selected=ui->EntryList->currentItem();
+
+    // forward the current selected entry to entry exporter
+    if(selected != NULL){
+        EntryExporter e;
+
+        // get title
+        QString title=selected->text(0);
+        title=title.trimmed();
+        title=title.simplified();
+
+        // process timestamp
+
+        if(current_entry_time.isEmpty()){
+            if(Buffer::backend=="MySQL"){
+                MySQLCore d;
+                current_entry_time=d.GetTimestamp(selected->text(1));
+
+            }
         }
+        e.UpdateValues(title,current_entry_date,current_entry_body,current_entry_time);
+    }
+
+    ui->Tag->setEnabled(true);
+    ui->ExportEntry->setEnabled(true);
+    ui->actionManage_Tags_2->setEnabled(true);
+    ui->actionExport_Entry->setEnabled(true);
+
 
 }
+
+//################################################################################################
+// Return the long date from the short date. (int) This was originally done more than once
+// in CreateTree() so it made sense to split it into a separate function to prevent redundant code
+
+QString MainWindow::GetLongMonth(int month){
+    QString longmonth;
+    switch(month){
+        case 1:
+            longmonth="January";
+            break;
+
+        case 2:
+            longmonth="February";
+            break;
+
+        case 3:
+            longmonth="March";
+            break;
+
+        case 4:
+            longmonth="April";
+            break;
+
+        case 5:
+            longmonth="May";
+            break;
+
+        case 6:
+            longmonth="June";
+            break;
+
+        case 7:
+            longmonth="July";
+            break;
+
+        case 8:
+            longmonth="August";
+            break;
+
+        case 9:
+            longmonth="September";
+            break;
+
+        case 10:
+            longmonth="October";
+            break;
+
+        case 11:
+            longmonth="November";
+            break;
+
+        case 12:
+            longmonth="December";
+            break;
+
+    }
+
+    return longmonth;
+}
+
 
 //################################################################################################
 // All-important function that sets up the Entry tree list.
@@ -1105,6 +1449,9 @@ void MainWindow::CreateTree(){
     //QIcon yearicon(":/icons/bullet_blue.png");
 
     QIcon entryicon(":/icons/pencil.png");
+
+    // get rid of indicator (expand/collapse widget) on root node. Fixed in version 0.3.
+    ui->EntryList->setRootIsDecorated(false);
 
     QFont heavy("sans",10);
     heavy.setWeight(QFont::DemiBold);
@@ -1136,9 +1483,9 @@ void MainWindow::CreateTree(){
             QListIterator<QString> IteratorYear(YearList);
 
 
-            ui->EntryList->setHeaderLabel("Database contents (chronological)");
-            ui->EntryList->setToolTip(NULL);
-            ui->EntryList->setHeaderHidden(false);
+            //ui->EntryList->setHeaderLabel("Database contents (chronological)");
+            //ui->EntryList->setToolTip(NULL);
+            //ui->EntryList->setHeaderHidden(false);
 
             QString db=Buffer::database_name;
 
@@ -1148,8 +1495,6 @@ void MainWindow::CreateTree(){
             root->setText(0, db);
             root->setIcon(0,rooticon);
             root->setToolTip(0, "<b>" + Buffer::database_name + "</b>@<b>" + Buffer::host + "</b>");
-            //root->setFont(0,heavy);
-
 
             for(int y=0; y<YearList.count(); y++){
                 QTreeWidgetItem *year = new QTreeWidgetItem(root);
@@ -1173,58 +1518,8 @@ void MainWindow::CreateTree(){
                     //cout << "Item month:" << itemmonth.toStdString() <<endl;
                     int switchmonth=itemmonth.toInt();
 
-                    QString longmonth;
+                    QString longmonth=GetLongMonth(switchmonth);
 
-
-                    switch(switchmonth){
-                        case 1:
-                        longmonth="January";
-                        break;
-
-                        case 2:
-                        longmonth="February";
-                        break;
-
-                        case 3:
-                        longmonth="March";
-                        break;
-
-                        case 4:
-                        longmonth="April";
-                        break;
-
-                        case 5:
-                        longmonth="May";
-                        break;
-
-                        case 6:
-                        longmonth="June";
-                        break;
-
-                        case 7:
-                        longmonth="July";
-                        break;
-
-                        case 8:
-                        longmonth="August";
-                        break;
-
-                        case 9:
-                        longmonth="September";
-                        break;
-
-                        case 10:
-                        longmonth="October";
-                        break;
-
-                        case 11:
-                        longmonth="November";
-                        break;
-
-                        case 12:
-                            longmonth="December";
-                        break;
-                    }
 
                     DayList=my.getDay(itemmonth,nextyear);
                     //cout << "Daylist: " << DayList.length();
@@ -1256,10 +1551,6 @@ void MainWindow::CreateTree(){
                             break;
                         }
 
-
-
-
-
                         EntryList=my.getEntries(itemday,itemmonth);
 
                         QListIterator<QString> IteratorEntry(EntryList);
@@ -1286,19 +1577,12 @@ void MainWindow::CreateTree(){
 
                             totalcount++; // update totalcount
 
-                            // append to highlight list;
-
-
-
-
-                            //hilite_list.append();
-
                         }
 
                         //if EntryCount==0, we have a new journal. Show a message if this happens.
                         if(EntryCount==0){
                             QMessageBox a;
-                            a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or hit F4) to get started.");
+                            a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or press F4) to get started.");
                         }
 
                         EntryList.clear();
@@ -1328,7 +1612,7 @@ void MainWindow::CreateTree(){
             if(NewJournal){
                 root->setHidden(true);
                 QMessageBox a;
-                a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or hit F4) to get started.");
+                a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or press F4) to get started.");
             }
 
             YearList.clear();
@@ -1358,9 +1642,9 @@ void MainWindow::CreateTree(){
             QListIterator<QString> IteratorYear(YearList);
 
 
-            ui->EntryList->setHeaderLabel("Database contents (chronological)");
-            ui->EntryList->setToolTip(NULL);
-            ui->EntryList->setHeaderHidden(false);
+            //ui->EntryList->setHeaderLabel("Database contents (chronological)");
+            //ui->EntryList->setToolTip(NULL);
+            //ui->EntryList->setHeaderHidden(false);
 
             QString db=Buffer::database_name;
 
@@ -1399,58 +1683,7 @@ void MainWindow::CreateTree(){
                     //cout << "Item month:" << itemmonth.toStdString() <<endl;
                     int switchmonth=itemmonth.toInt();
 
-                    QString longmonth;
-
-
-                    switch(switchmonth){
-                        case 1:
-                        longmonth="January";
-                        break;
-
-                        case 2:
-                        longmonth="February";
-                        break;
-
-                        case 3:
-                        longmonth="March";
-                        break;
-
-                        case 4:
-                        longmonth="April";
-                        break;
-
-                        case 5:
-                        longmonth="May";
-                        break;
-
-                        case 6:
-                        longmonth="June";
-                        break;
-
-                        case 7:
-                        longmonth="July";
-                        break;
-
-                        case 8:
-                        longmonth="August";
-                        break;
-
-                        case 9:
-                        longmonth="September";
-                        break;
-
-                        case 10:
-                        longmonth="October";
-                        break;
-
-                        case 11:
-                        longmonth="November";
-                        break;
-
-                        case 12:
-                            longmonth="December";
-                        break;
-                    }
+                    QString longmonth=GetLongMonth(switchmonth);
 
                     EntryList=my.getEntriesMonth(itemmonth,nextyear);
                     //cout << "Daylist: " << DayList.length();
@@ -1534,7 +1767,7 @@ void MainWindow::CreateTree(){
             if(NewJournal){
                 root->setHidden(true);
                 QMessageBox a;
-                a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or hit F4) to get started.");
+                a.information(this,"RoboJournal","Welcome to your new journal! Click <b>Write in Journal</b> (or press F4) to get started.");
             }
 
         }
@@ -1582,11 +1815,14 @@ void MainWindow::TotalEntryCount(int totalcount){
     //jump to first entry at login
     num_records=totalcount;
 
+    ui->TotalCount->setTextFormat(Qt::RichText);
+
+    // Note: Use space characters here instead of HTML nonbreaking space. For some reason, "&nbsp" shows up.
     if(totalcount==1){
-        ui->TotalCount->setText(count  + " entry ");
+        ui->TotalCount->setText("<img src=\":/icons/page_white_database.png\">&nbsp;&nbsp;" + count  + " entry&nbsp;");
     }
     else{
-        ui->TotalCount->setText(count  + " entries ");
+        ui->TotalCount->setText("<img src=\":/icons/page_white_database.png\">&nbsp;&nbsp;" + count  + " entries&nbsp;");
     }
 
     QString indicator;
@@ -1595,24 +1831,45 @@ void MainWindow::TotalEntryCount(int totalcount){
     if(Buffer::allentries){
         indicator="<nobr>Total number of entries to date in <b>" + Buffer::database_name + "</b></nobr>";
         ui->TotalCount->setToolTip(indicator);
-        ui->statusBar->showMessage("Displaying all entries in the database...",1500);
+        //ui->statusBar->showMessage("Displaying all entries in the database...",1500);
     }
     else{
         int range=Buffer::entryrange.toInt();
 
         if(range==1){
 
+            //QFrame *div = new QFrame(this);
+            //div->setFrameStyle();
+
             indicator="<nobr>Total number of entries for current range (" +
                     Buffer::entryrange + " year) in <b>" + Buffer::database_name + "</b></nobr>";
-             ui->TotalCount->setToolTip(indicator);
-             ui->statusBar->showMessage("Displaying all entries from this year...",1500);
+            ui->TotalCount->setToolTip(indicator);
+            //ui->statusBar->showMessage("Displaying all entries from this year...",1500);
+
+
+            // Add year indicator if user decides to use it
+
+
+            if(Buffer::use_indicator){
+
+                ui->TotalCount->setText(ui->TotalCount->text() +  "<b>:</b>" +
+                                        "&nbsp;<img src=\":/icons/hourglass.png\">&nbsp;1 year");
+            }
         }
         else{
             indicator="<nobr>Total number of entries for current range (" +
                     Buffer::entryrange + " years) in <b>" + Buffer::database_name + "</b></nobr>";
             ui->TotalCount->setToolTip(indicator);
-            ui->statusBar->showMessage("Displaying all entries from the last " + Buffer::entryrange
-                                       + " years...",1500);
+            //ui->statusBar->showMessage("Displaying all entries from the last " + Buffer::entryrange
+            //+ " years...",1500);
+
+
+            // Add year indicator if user decides to use it
+            if(Buffer::use_indicator){
+
+                ui->TotalCount->setText(ui->TotalCount->text() +  "<b>:</b>" + "&nbsp;<img src=\":/icons/hourglass.png\">&nbsp;"
+                                        + Buffer::entryrange + " years&nbsp;");
+            }
         }
     }
 }
@@ -1623,8 +1880,6 @@ void MainWindow::MostRecent(){
     if(Buffer::backend=="MySQL"){
         MySQLCore c;
         QString body=c.Recent();
-
-
 
         // convert plain text linebreaks to html
         body.replace("\n","<br>");
@@ -1642,6 +1897,12 @@ void MainWindow::MostRecent(){
 
         //QString timestamp=c.TimeStamp(id);
 
+        // get tags
+        QString tags=c.GetTags(c.recordnum);
+
+        //format tags
+        QString output_tags=FormatTags(tags, color1,color2);
+
         // display title above entry
         if(Buffer::show_title){
 
@@ -1653,12 +1914,14 @@ void MainWindow::MostRecent(){
                 QString invertcolor=InvertColor(Buffer::text_hexcolor);
                 ui->Output->setText(title + "<div style=\"background-color: " + Buffer::text_hexcolor +
                                     "; color: " + invertcolor + "; width=100%; \"><small>&nbsp;&nbsp; " +
-                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "</div>");
+                                    Buffer::username + " wrote:</small></div><div><br>" + body   + "<br>" +
+                                    output_tags + "</div>");
             }
             else{
                 ui->Output->setText(title + "<div style=\"background-color: " + color1 +
                                     "; color: " + color2 + "; width=100%; \"><small>&nbsp;&nbsp; " +
-                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "</div>");
+                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "<br>" +
+                                    output_tags  + "</div>");
             }
 
         }
@@ -1668,22 +1931,32 @@ void MainWindow::MostRecent(){
                 QString invertcolor=InvertColor(Buffer::text_hexcolor);
                 ui->Output->setText("<div style=\"background-color: " + Buffer::text_hexcolor +
                                     "; color: " + invertcolor + "; width=100%; \"><small>&nbsp;&nbsp; " +
-                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "</div>");
+                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "<br>" +
+                                    output_tags +"</div> ");
             }
             else{
                 ui->Output->setText("<div style=\"background-color: " + color1 +
                                     "; color: " + color2 + "; width=100%; \"><small>&nbsp;&nbsp; " +
-                                    Buffer::username + " wrote:</small></div><div><br>" + body  + "</div>");
+                                    Buffer::username + " wrote:</small></div><div><br>" + body  +
+                                    "<br>" + output_tags + "</div>");
             }
 
         }
 
 
-
+        // Set Current ID
         ui->NextEntry->setDisabled(true);
-
         CurrentID=QString::number(c.ID);
+
+
+        // Highlight Current Entry
         HighlightCurrentSelection(CurrentID);
+
+        QTreeWidgetItem *selected=ui->EntryList->currentItem();
+        //EntryExporter e(this);
+        EntryExporter::title=selected->text(0);
+
+
     }
 }
 //################################################################################################
@@ -1845,7 +2118,16 @@ void MainWindow::on_EntryList_itemClicked(QTreeWidgetItem *item)
         // update selected entry
         UpdateSelectedEntry(id);
 
-        //cout << id.toStdString() << endl;
+        // re-enable tagger and Exporter if we click on a valid entry
+
+        if((!ui->Tag->isEnabled()) || (!ui->ExportEntry->isEnabled())){
+
+            ui->Tag->setEnabled(true);
+            ui->ExportEntry->setEnabled(true);
+            ui->actionManage_Tags_2->setEnabled(true);
+            ui->actionExport_Entry->setEnabled(true);
+        }
+
     }
     else{
         //cout << "This is **NOT** an entry!" << endl;
@@ -1868,34 +2150,34 @@ void MainWindow::GetAdjacent(int direction){
         //go backward one entry
         if(direction==0){
 
+            if(!ui->NextEntry->isEnabled()){
+                ui->NextEntry->setEnabled(true);
+                ui->actionNext_Entry->setEnabled(true);
+            }
+
+            int position=IDList.indexOf(Record);
+            position--;
+            //cout << position << endl;
+
+            QString lastindex=IDList.value(position);
+            QString id=lastindex;
+            //cout << lastindex.toStdString() << endl;
+
+            if(position<0){
+                ui->LastEntry->setDisabled(true);
+                ui->actionPrevious_Entry->setDisabled(true);
                 if(!ui->NextEntry->isEnabled()){
                     ui->NextEntry->setEnabled(true);
                     ui->actionNext_Entry->setEnabled(true);
                 }
+            }
+            else{
 
-                int position=IDList.indexOf(Record);
-                position--;
-                //cout << position << endl;
-
-                QString lastindex=IDList.value(position);
-                QString id=lastindex;
-                //cout << lastindex.toStdString() << endl;
-
-                if(position<0){
-                    ui->LastEntry->setDisabled(true);
-                    ui->actionPrevious_Entry->setDisabled(true);
-                    if(!ui->NextEntry->isEnabled()){
-                        ui->NextEntry->setEnabled(true);
-                        ui->actionNext_Entry->setEnabled(true);
-                    }
+                if(CurrentID != "-1"){
+                    GetEntry(id);
+                    Record=lastindex;
                 }
-                else{
-
-                    if(CurrentID != "-1"){
-                        GetEntry(id);
-                        Record=lastindex;
-                    }
-                }
+            }
 
 
         }
@@ -1935,16 +2217,13 @@ void MainWindow::GetAdjacent(int direction){
                         GetEntry(id);
                         Record=nextindex;
                     }
-
-
                 }
-
             }
         }
     }
 
     if(CurrentID != "-1"){
-       HighlightCurrentSelection(Record);
+        HighlightCurrentSelection(Record);
     }
 
 
@@ -1986,22 +2265,18 @@ void MainWindow::on_actionSetup_Wizard_2_triggered()
 
 
     if(Buffer::showwarnings){
-
-
-
         QMessageBox m;
         int reconfigure=m.question(this,"Reconfigure RoboJournal?",
-        "Running the RoboJournal Setup Wizard again will purge all existing configuration settings. "
-        "(however, any journal databases you have already created will be preserved) "
-        " Are you sure you want to do this?",QMessageBox::Cancel,QMessageBox::Ok);
+                                   "Running the RoboJournal Setup Wizard again will purge all existing configuration settings. "
+                                   "(however, any journal databases you have already created will be preserved) "
+                                   " Are you sure you want to do this?",QMessageBox::Cancel,QMessageBox::Ok);
 
         switch(reconfigure){
-            case QMessageBox::Ok:
+        case QMessageBox::Ok:
             f.exec();
-
             break;
 
-            case QMessageBox::Cancel:
+        case QMessageBox::Cancel:
             // do nothing
             break;
         }
@@ -2015,8 +2290,7 @@ void MainWindow::on_actionSetup_Wizard_2_triggered()
 void MainWindow::on_actionPrint_triggered()
 {
     if(ui->Output->toPlainText()!=NULL){
-//        QMessageBox m;
-//        m.critical(this,"Error","Printing is not implemented yet!");
+
 
         Print();
         //ui->Output->print();
@@ -2028,12 +2302,14 @@ void MainWindow::on_actionPrint_triggered()
 void MainWindow::on_DeleteEntry_clicked()
 {
     DeleteSelectedEntry();
+
 }
 
 //################################################################################################
 void MainWindow::on_actionDelete_Current_Entry_triggered()
 {
     DeleteSelectedEntry();
+
 }
 
 //################################################################################################
@@ -2049,5 +2325,59 @@ void MainWindow::on_actionHelp_file_triggered()
 //################################################################################################
 void MainWindow::on_EditEntryButton_clicked()
 {
-Modify();
+    Modify();
+}
+//################################################################################################
+void MainWindow::on_Tag_clicked()
+{
+
+    Tag();
+}
+//################################################################################################
+void MainWindow::on_actionManage_Tags_2_triggered()
+{
+    Tag();
+}
+
+void MainWindow::on_actionCreate_a_New_Journal_triggered()
+{
+    JournalCreator j(this);
+    //j.setWindowTitle("Journal Creator");
+    j.exec();
+
+}
+
+void MainWindow::on_actionSelect_Default_Journal_triggered()
+{
+    JournalSelector j(this);
+    j.exec();
+}
+
+void MainWindow::on_ExportEntry_clicked()
+{
+
+    ExportEntry();
+}
+
+void MainWindow::on_actionExport_Entry_triggered()
+{
+    ExportEntry();
+}
+
+void MainWindow::on_actionEntry_List_toggled(bool arg1)
+{
+    QList<int> minimized;
+    minimized.append(0);
+    minimized.append(100);
+
+    QList<int> evensplit;
+    evensplit.append(50);
+    evensplit.append(50);
+
+    if(arg1){
+        ui->splitter->setSizes(evensplit);
+    }
+    else{
+        ui->splitter->setSizes(minimized);
+    }
 }

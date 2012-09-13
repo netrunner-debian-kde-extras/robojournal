@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>749</width>
-    <height>557</height>
+    <width>737</width>
+    <height>545</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -116,7 +116,7 @@
     <item row="3" column="0">
      <widget class="QToolButton" name="ConfigButton">
       <property name="toolTip">
-       <string>Change RoboJournal's behavior</string>
+       <string>RoboJournal Preferences</string>
       </property>
       <property name="text">
        <string>Preferences</string>
@@ -133,7 +133,7 @@
     <item row="3" column="2">
      <widget class="QToolButton" name="DisconnectButton">
       <property name="toolTip">
-       <string>Disconnect from database</string>
+       <string>Disconnect</string>
       </property>
       <property name="text">
        <string>Disconnect</string>
@@ -150,7 +150,7 @@
     <item row="3" column="1">
      <widget class="QToolButton" name="EditEntryButton">
       <property name="toolTip">
-       <string>Modify the current (selected) entry</string>
+       <string>Modify Entry</string>
       </property>
       <property name="text">
        <string>Modify Entry</string>
@@ -167,7 +167,7 @@
     <item row="3" column="4">
      <widget class="QToolButton" name="ConnectButton">
       <property name="toolTip">
-       <string>Connect to a journal database</string>
+       <string>Connect</string>
       </property>
       <property name="text">
        <string>Connect</string>
@@ -184,7 +184,7 @@
     <item row="5" column="1">
      <widget class="QToolButton" name="TodayButton">
       <property name="toolTip">
-       <string>View newest entry</string>
+       <string>Latest</string>
       </property>
       <property name="text">
        <string>Latest</string>
@@ -218,7 +218,7 @@
     <item row="5" column="3">
      <widget class="QToolButton" name="DeleteEntry">
       <property name="toolTip">
-       <string>Delete the current (selected) entry</string>
+       <string>Delete Entry</string>
       </property>
       <property name="text">
        <string>Delete Entry</string>
@@ -235,7 +235,7 @@
     <item row="2" column="0">
      <widget class="QToolButton" name="LastEntry">
       <property name="toolTip">
-       <string>View previous entry</string>
+       <string>Previous Entry</string>
       </property>
       <property name="text">
        <string>Previous</string>
@@ -252,7 +252,7 @@
     <item row="2" column="1">
      <widget class="QToolButton" name="NextEntry">
       <property name="toolTip">
-       <string>View next entry</string>
+       <string>Next Entry</string>
       </property>
       <property name="text">
        <string>Next</string>
@@ -269,7 +269,7 @@
     <item row="5" column="0">
      <widget class="QToolButton" name="WriteButton">
       <property name="toolTip">
-       <string>Write a new entry in current journal</string>
+       <string>Write in Journal</string>
       </property>
       <property name="text">
        <string>Write in Journal</string>
@@ -290,6 +290,47 @@
       </property>
      </widget>
     </item>
+    <item row="3" column="3">
+     <widget class="QToolButton" name="Tag">
+      <property name="toolTip">
+       <string>Manage Tags</string>
+      </property>
+      <property name="text">
+       <string>Manage Tags</string>
+      </property>
+      <property name="icon">
+       <iconset resource="images.qrc">
+        <normaloff>:/icons/tag_orange.png</normaloff>:/icons/tag_orange.png</iconset>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="5" column="4">
+     <widget class="QToolButton" name="ExportEntry">
+      <property name="toolTip">
+       <string>Export Content</string>
+      </property>
+      <property name="text">
+       <string>Export Content</string>
+      </property>
+      <property name="icon">
+       <iconset resource="images.qrc">
+        <normaloff>:/icons/disk.png</normaloff>:/icons/disk.png</iconset>
+      </property>
+      <property name="toolButtonStyle">
+       <enum>Qt::ToolButtonTextBesideIcon</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="4">
+     <widget class="QLabel" name="Status_User">
+      <property name="text">
+       <string>User: None</string>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
   <widget class="QMenuBar" name="menuBar">
@@ -297,7 +338,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>749</width>
+     <width>737</width>
      <height>21</height>
     </rect>
    </property>
@@ -305,8 +346,8 @@
     <property name="title">
      <string>File</string>
     </property>
-    <addaction name="actionSave_Current_Entry"/>
     <addaction name="actionPrint"/>
+    <addaction name="actionExport_Entry"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
@@ -331,6 +372,7 @@
     <addaction name="actionEdit_Selected_Entry"/>
     <addaction name="actionDelete_Current_Entry"/>
     <addaction name="separator"/>
+    <addaction name="actionManage_Tags_2"/>
    </widget>
    <widget class="QMenu" name="menuDatabase">
     <property name="title">
@@ -339,7 +381,8 @@
     <addaction name="actionConnect"/>
     <addaction name="actionDisconnect"/>
     <addaction name="separator"/>
-    <addaction name="actionSetup_Wizard_2"/>
+    <addaction name="actionCreate_a_New_Journal"/>
+    <addaction name="actionSelect_Default_Journal"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -358,6 +401,7 @@
       <string>Show</string>
      </property>
      <addaction name="actionMain_toolbar"/>
+     <addaction name="actionEntry_List"/>
     </widget>
     <widget class="QMenu" name="menuToolbar_Position">
      <property name="title">
@@ -516,6 +560,10 @@
    </property>
   </action>
   <action name="actionManage_Tags">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/tag_orange.png</normaloff>:/icons/tag_orange.png</iconset>
+   </property>
    <property name="text">
     <string>Manage Tags</string>
    </property>
@@ -700,13 +748,86 @@
   <action name="actionSave_Current_Entry">
    <property name="icon">
     <iconset resource="images.qrc">
-     <normaloff>:/icons/action_save.gif</normaloff>:/icons/action_save.gif</iconset>
+     <normaloff>:/icons/disk.png</normaloff>:/icons/disk.png</iconset>
    </property>
    <property name="text">
     <string>Export Entry</string>
    </property>
    <property name="toolTip">
-    <string>Save current entry as a HTML file</string>
+    <string>Save current entry</string>
+   </property>
+  </action>
+  <action name="actionManage_Tags_2">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/tag_orange.png</normaloff>:/icons/tag_orange.png</iconset>
+   </property>
+   <property name="text">
+    <string>Manage Tags</string>
+   </property>
+   <property name="shortcut">
+    <string>F6</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionCreate_a_New_Journal">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/database_add.png</normaloff>:/icons/database_add.png</iconset>
+   </property>
+   <property name="text">
+    <string>Create a New Journal</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionSelect_Default_Journal">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/wand.png</normaloff>:/icons/wand.png</iconset>
+   </property>
+   <property name="text">
+    <string>Select Default Journal</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionExport_Entry">
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/disk.png</normaloff>:/icons/disk.png</iconset>
+   </property>
+   <property name="text">
+    <string>Export Content</string>
+   </property>
+   <property name="toolTip">
+    <string>Export content from your journal to a HTML or text file</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+   <property name="iconVisibleInMenu">
+    <bool>true</bool>
+   </property>
+  </action>
+  <action name="actionEntry_List">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="images.qrc">
+     <normaloff>:/icons/application_side_expand.png</normaloff>
+     <normalon>:/icons/application_side_contract.png</normalon>:/icons/application_side_expand.png</iconset>
+   </property>
+   <property name="text">
+    <string>Entry List</string>
+   </property>
+   <property name="shortcut">
+    <string>F11</string>
    </property>
   </action>
  </widget>

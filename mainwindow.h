@@ -52,6 +52,7 @@ public:
 
 
 
+
 private slots:
     void on_WriteButton_clicked();
     void on_SearchButton_clicked();
@@ -91,6 +92,20 @@ private slots:
 
     void on_EditEntryButton_clicked();
 
+    void on_Tag_clicked();
+
+    void on_actionManage_Tags_2_triggered();
+
+    void on_actionCreate_a_New_Journal_triggered();
+
+    void on_actionSelect_Default_Journal_triggered();
+
+    void on_ExportEntry_clicked();
+
+    void on_actionExport_Entry_triggered();
+
+    void on_actionEntry_List_toggled(bool arg1);
+
 private:
     Ui::MainWindow *ui;
     void PrimaryConfig();
@@ -111,10 +126,13 @@ private:
     void TotalEntryCount(int totalcount);
     void Decorate_GUI();
     void Print();
+    void ExportEntry();
     bool SaveEntry();
     void UpgradeJournal();
+    QString GetLongMonth(int month);
     void closeEvent(QCloseEvent *event);
-
+    QString FormatTags(QString tags, QString color1, QString color2);
+    void Tag();
 
     QString InvertColor(QString textcolor); // returns hex color inverse of input text color
 
@@ -128,6 +146,13 @@ private:
     QString Record; // contains the current record number (row id)
 
     int num_records; // this int holds the number of records. This is used for several functions.
+
+    QString Global_Datestamp; // global date used for EntryExporter. When the user fetches a record, this value should hold the date for that entry.
+
+
+    QString current_entry_date; // date for entry exporter
+    QString current_entry_body; //body text for extry exporter
+    QString current_entry_time; // timestamp for entry exporter
 
     //QTreeWidgetItem current;
 

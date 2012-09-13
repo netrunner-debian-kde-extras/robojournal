@@ -29,11 +29,9 @@
 #include <buffer.h>
 #include <QErrorMessage>
 #include <QMessageBox>
-#include "newdatabase.h"
 #include <QAbstractButton>
 #include "firstrun.h"
 #include "ui_firstrun.h"
-
 
 // get user home directory
 QString homedir=QDir::homePath();
@@ -70,6 +68,9 @@ QString Config::new_24_hr;
 QString Config::new_rich_text;
 QString Config::new_date_mode;
 QString Config::new_icon_labels;
+QString Config::new_autoload;
+QString Config::new_SSL;
+QString Config::new_indicator;
 
 
 //###################################################################################################
@@ -92,7 +93,7 @@ void ConfigManager::ReadConfig(){
     using namespace std;
     QString var;
 
-    cout << "Output: Using home path: " + configpath.toStdString() << endl;
+    cout << "OUTPUT: Using home path: " + configpath.toStdString() << endl;
 
 
     // Check for config file when program starts. If it's not there, rebuild it.
@@ -438,6 +439,46 @@ void ConfigManager::ReadConfig(){
 
         }
 
+        // Load autoload flag (6/29/12)
+        if(linenum==31){
+            var=thisline.remove(0,9);
+            //cout << "Sort by day: " << var.toStdString();
+
+            if(var.trimmed()=="0"){
+                Buffer::autoload=false;
+            }
+            else{
+                 Buffer::autoload=true;
+            }
+
+
+        }
+
+        // Load SSL flag (7/22/12)
+        if(linenum==32){
+            var=thisline.remove(0,4);
+            //cout << "Use SSL: " << var.toStdString();
+
+            if(var.trimmed()=="0"){
+                Buffer::SSL=false;
+            }
+            else{
+                 Buffer::SSL=true;
+            }
+        }
+
+        // Load indicator flag (7/30/12)
+        if(linenum==33){
+            var=thisline.remove(0,15);
+            //cout << "Use SSL: " << var.toStdString();
+
+            if(var.trimmed()=="0"){
+                Buffer::use_indicator=false;
+            }
+            else{
+                 Buffer::use_indicator=true;
+            }
+        }
     }
 
     configfile.close();
@@ -507,6 +548,9 @@ void ::ConfigManager::RebuildConfig(){
              stream << "RICH_TEXT:0"<< endl;
              stream << "BACKGROUND_IMAGE:NULL"<< endl;
              stream << "ICON_LABELS:1"<< endl;
+             stream << "AUTOLOAD:1" << endl;
+             stream << "SSL:1" << endl;
+             stream << "YEAR_INDICATOR:1" << endl;
 
              configfile.close();
          }
@@ -557,6 +601,9 @@ void ConfigManager::UpdateConfig(){
             stream << "RICH_TEXT:"<< Config::new_rich_text.trimmed() << endl;
             stream << "BACKGROUND_IMAGE:" << Config::new_background_image.trimmed() << endl;
             stream << "ICON_LABELS:" << Config::new_icon_labels.trimmed() << endl;
+            stream << "AUTOLOAD:" << Config::new_autoload.trimmed() << endl;
+            stream << "SSL:" << Config::new_SSL.trimmed() << endl;
+            stream << "YEAR_INDICATOR:" << Config::new_indicator.trimmed() << endl;
 
             // Bugfix: always overwrite any junk data at the end of the config file with blank lines
             stream << "" << endl;
@@ -638,12 +685,16 @@ void ConfigManager::CustomSetup(QString host,QString db_name, QString port, QStr
              stream << "RICH_TEXT:0"<< endl;
              stream << "BACKGROUND_IMAGE:NULL"<< endl;
              stream << "ICON_LABELS:1"<< endl;
+             stream << "AUTOLOAD:1" << endl;
+             stream << "SSL:1" << endl;
+             stream << "YEAR_INDICATOR:1" << endl;
              configfile.close();
          }
      cout << "OUTPUT: Config file successfully replaced!" << endl;
      cout << "OUTPUT: Attempting re-read of config file..." <<endl;
      ReadConfig();
      configfile.close();
+
 }
 
 

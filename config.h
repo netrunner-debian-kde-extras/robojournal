@@ -22,6 +22,10 @@
 #define CONFIG_H
 
 #include <QDialog>
+#include <QAbstractButton>
+//#include <QSslSocket>
+//#include <qsslsocket.h>
+
 
 namespace Ui {
     class Config;
@@ -79,7 +83,9 @@ public:
     static QString new_use_local_time;
     static QString new_24_hr;
     static QString new_icon_labels;
-
+    static QString new_autoload;
+    static QString new_SSL;
+    static QString new_indicator;
 
 
 
@@ -117,9 +123,68 @@ private slots:
 
     void on_ClearButton_clicked();
 
+    void on_buttonBox_clicked(QAbstractButton *button);
+
+
+
+    void on_UseDefaults_clicked();
+
+    void on_ShowConfirmation_clicked();
+
+    void on_IconText_clicked();
+
+    void on_DefaultMenuPos_currentIndexChanged();
+
+    void on_RecordTime_clicked();
+
+    void on_Use24Clock_clicked();
+
+    void on_DateFormat_currentIndexChanged();
+
+    void on_RangeIndicator_clicked();
+
+    void on_YearRange_currentIndexChanged();
+
+    void on_SortByDay_clicked();
+
+    void on_ShowTitle_clicked();
+
+    void on_AlternateRows_clicked();
+
+    void on_AutoLoad_clicked();
+
+    void on_RichText_clicked();
+
+    void on_Font_currentIndexChanged();
+
+    void on_FontSize_currentIndexChanged();
+
+    void on_ColorValue_textChanged();
+
+    void on_BGImage_textChanged();
+
+    void on_TileBackground_clicked();
+
+    void on_Entrylist_Background_clicked();
+
+    void on_DBPort_textChanged();
+
+    void on_DefaultHost_textChanged();
+
+    void on_DefaultDB_textChanged();
+
+
+
+    void on_DefaultUser_textChanged();
+
+    void on_AllowRoot_clicked();
+
+    void on_UseSSL_clicked();
+
 private:
     Ui::Config *ui;
     void Populate();
+    void UnlockButtons();
 };
 
 #endif // CONFIG_H

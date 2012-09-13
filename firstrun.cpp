@@ -23,10 +23,13 @@
 #include "buffer.h"
 #include "journalcreator.h"
 #include "ui_journalcreator.h"
+#include "journalselector.h"
+#include "ui_journalselector.h"
 #include "config.h"
 #include "ui_config.h"
 #include "configmanager.h"
 #include <iostream>
+#include <QMessageBox>
 
 
 FirstRun::FirstRun(QWidget *parent) :
@@ -36,6 +39,12 @@ FirstRun::FirstRun(QWidget *parent) :
     using namespace std;
     ui->setupUi(this);
 
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon.png");
+    this->setWindowIcon(unixicon);
+
+#endif
+
     int width=this->width();
     int height=this->height();
     this->setMaximumSize(width,height);
@@ -44,7 +53,7 @@ FirstRun::FirstRun(QWidget *parent) :
     cout << "OUTPUT: Configuration not set. (or manual reconfiguration requested) Starting first-run tool..." << endl;
 
     // make the new journal option default
-    ui->NewJournal->setChecked(true);
+    ui->NewJournal->click();
 
     // hide question mark button in title bar when running on Windows
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
@@ -64,21 +73,26 @@ void FirstRun::Launcher(){
     this->close();
 
     if(ui->NewJournal->isChecked()){
+        this->close();
         JournalCreator j;
         j.exec();
     }
     else{
-        // Get rid of first run flag
-        Buffer::firstrun=false;
+        this->close();
+        JournalSelector s;
+        s.exec();
+        // old code, deprecated as of 0.3
+//        // Get rid of first run flag
+//        Buffer::firstrun=false;
 
-        // create a basic config, doesn't matter what it says right now. We just need to have a config file present
-        ConfigManager m;
-        m.RebuildConfig();
+//        // create a basic config, doesn't matter what it says right now. We just need to have a config file present
+//        ConfigManager m;
+//        m.RebuildConfig();
 
-        // and let the user change the database information
-        Config c;
-        c.ManualConfig();
-        c.exec();
+//        // and let the user change the database information
+//        Config c;
+//        c.ManualConfig();
+//        c.exec();
     }
 }
 
@@ -90,7 +104,18 @@ void FirstRun::on_buttonBox_accepted()
 void FirstRun::on_buttonBox_rejected()
 {
     if(Buffer::firstrun){
-        exit(0);
+        // get confirmation about quitting
+        QMessageBox g;
+        int choice=g.question(this,"RoboJournal","You have not finished the RoboJournal configuration process. "
+                              "Do you really want to quit?", QMessageBox::Yes|QMessageBox::No,QMessageBox::No);
+
+        if(choice==QMessageBox::Yes){
+            exit(0);
+        }
+        else{
+            // do nothing
+        }
+
     }
     else{
         this->close();
