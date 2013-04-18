@@ -1,6 +1,8 @@
-robojournal (0.4.1-1) UNRELEASED; urgency=low
+robojournal (0.4.1-1) experimental; urgency=low
 
-  * test 
+  * New Upstream Release
+  * Add build-depends on libqtwebkit-dev
+  * Add new package robojournal-doc
 
  -- Ritesh Raj Sarraf <rrs@debian.org>  Thu, 18 Apr 2013 08:04:42 +0530
 
