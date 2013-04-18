@@ -1,0 +1,58 @@
+Add patch to fix hardcoded documentation
+Index: robojournal/doc/preview_doc.sh
+===================================================================
+--- robojournal.orig/doc/preview_doc.sh	2013-04-18 09:21:20.969701886 +0530
++++ robojournal/doc/preview_doc.sh	2013-04-18 09:21:20.961701886 +0530
+@@ -12,5 +12,5 @@
+ echo \(If everything is installed correctly, Qt Assistant will appear and display 
+ echo the RoboJournal documentation.\)
+ echo 
+-assistant -collectionFile /usr/share/doc/robojournal-0.4.1/robojournal.qhc
++assistant -collectionFile /usr/share/doc/robojournal/robojournal.qhc
+ 
+Index: robojournal/doc/robojournal.qhcp
+===================================================================
+--- robojournal.orig/doc/robojournal.qhcp	2013-04-18 09:21:20.969701886 +0530
++++ robojournal/doc/robojournal.qhcp	2013-04-18 09:21:20.961701886 +0530
+@@ -2,8 +2,8 @@
+  <QHelpCollectionProject version="1.0">
+      <assistant>
+          <title>RoboJournal Documentation</title>
+-         <startPage>qthelp://robojournal.0.4.1/doc/index.html</startPage>
+-		 <homePage>qthelp://robojournal.0.4.1/doc/toc.html</homePage>
++         <startPage>qthelp://robojournal/doc/index.html</startPage>
++		 <homePage>qthelp://robojournal/doc/toc.html</homePage>
+          <applicationIcon>rj_help.png</applicationIcon>
+          <enableFilterFunctionality>false</enableFilterFunctionality>
+          <enableDocumentationManager>false</enableDocumentationManager>
+@@ -24,4 +24,4 @@
+              <file>robojournal.qch</file>
+          </register>
+      </docFiles>
+- </QHelpCollectionProject>
+\ No newline at end of file
++ </QHelpCollectionProject>
+Index: robojournal/ui/mainwindow.cpp
+===================================================================
+--- robojournal.orig/ui/mainwindow.cpp	2013-04-18 09:21:20.969701886 +0530
++++ robojournal/ui/mainwindow.cpp	2013-04-18 09:21:51.001700816 +0530
+@@ -1033,8 +1033,8 @@
+ 
+ #ifdef unix
+     assistant="/usr/bin/assistant";
+-    compiled_help_path="/usr/share/doc/robojournal-" + Buffer::version + "/robojournal.qch";
+-    collection_path="/usr/share/doc/robojournal-" + Buffer::version + "/robojournal.qhc";
++    compiled_help_path="/usr/share/doc/robojournal-doc/robojournal.qch";
++    collection_path="/usr/share/doc/robojournal-doc/robojournal.qhc";
+ #endif
+ 
+     QFile assistant_exec(assistant);
+@@ -1110,7 +1110,7 @@
+ #endif
+ 
+ #ifdef unix
+-                location="/usr/share/doc/robojournal-" + Buffer::version;
++                location="/usr/share/doc/robojournal-doc";
+ #endif
+ 
+                 b.critical(this,"RoboJournal","RoboJournal could not locate the Collection File"

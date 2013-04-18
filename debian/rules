@@ -10,6 +10,12 @@ override_dh_auto_configure:
 
 override_dh_auto_install:
 	install -m755 -d $(DESTDIR)/usr/share/pixmaps
+	install -m755 -d $(DESTDIR)/usr/share/applications
 	install -m755 -d $(DESTDIR)/usr/bin
 	install -m755 robojournal $(DESTDIR)/usr/bin
 	install -m644 icons/robojournal-icon.xpm $(DESTDIR)/usr/share/pixmaps
+	install -m644 menus/robojournal.desktop $(DESTDIR)/usr/share/applications
+
+override_dh_compress:
+	# bypass the robojournal help files compression
+	dh_compress -X.qhc -X.qch
