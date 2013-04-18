@@ -5,6 +5,9 @@
 
 DESTDIR=$(CURDIR)/debian/robojournal
 
+# Enable Hardening
+export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+
 override_dh_auto_configure:
 	qmake robojournal.pro
 
