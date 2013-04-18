@@ -47,17 +47,22 @@ public:
     QList<QString> Create_ID_List(int year_range);
 
     QList<QString> getEntriesMonth(QString month, QString year);
+    QList<QString> TagSearch();
 
     bool CreateDatabase(QString host,QString root_pass, QString db_name, QString port, QString newuser, QString newuser_pass);
 
-    bool Update(QString title, int month, int day, int year, QString tags, QString body, QString id);
+    bool Update(QString title, int month, int day, int year,  QString body, QString id);
 
     bool UpgradeJournal(QString root_pass);
 
     QString GetTitle(QString id);
     QString GetTimestamp(QString id);
+    QString GetTags(QString id);
+    bool UpdateTags(QString tag_data, QString id);
 
+    QStringList GetDatabaseList(QString hostname, QString port, QString username, QString password);
 
+    QList<QStringList> DumpDatabase(bool asc);
 
     static int ID;
 
@@ -73,6 +78,8 @@ public:
 
 private:
 
+    QString old_username;
+    QString old_password;
 };
 
 #endif // MYSQLCORE_H

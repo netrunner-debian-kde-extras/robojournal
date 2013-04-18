@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>356</width>
-    <height>403</height>
+    <width>367</width>
+    <height>429</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -17,852 +17,927 @@
    <iconset resource="images.qrc">
     <normaloff>:/icons/robojournal-icon.png</normaloff>:/icons/robojournal-icon.png</iconset>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox">
-   <property name="geometry">
-    <rect>
-     <x>10</x>
-     <y>370</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation">
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons">
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QTabWidget" name="TabBox">
+  <widget class="QWidget" name="layoutWidget12">
    <property name="geometry">
     <rect>
      <x>10</x>
      <y>10</y>
-     <width>341</width>
-     <height>351</height>
+     <width>351</width>
+     <height>411</height>
     </rect>
    </property>
-   <property name="tabPosition">
-    <enum>QTabWidget::North</enum>
-   </property>
-   <property name="tabShape">
-    <enum>QTabWidget::Rounded</enum>
-   </property>
-   <property name="currentIndex">
-    <number>0</number>
-   </property>
-   <property name="elideMode">
-    <enum>Qt::ElideNone</enum>
-   </property>
-   <property name="documentMode">
-    <bool>false</bool>
-   </property>
-   <widget class="QWidget" name="Tab_General">
-    <attribute name="title">
-     <string>General</string>
-    </attribute>
-    <attribute name="toolTip">
-     <string>Program-wide settings</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_2">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>311</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>RoboJournal Behavior</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>22</y>
-        <width>291</width>
-        <height>101</height>
-       </rect>
+   <layout class="QVBoxLayout" name="verticalLayout_4">
+    <item>
+     <widget class="QTabWidget" name="TabBox">
+      <property name="tabPosition">
+       <enum>QTabWidget::North</enum>
       </property>
-      <layout class="QGridLayout" name="gridLayout_5">
-       <item row="0" column="0" colspan="2">
-        <widget class="QCheckBox" name="UseDefaults">
-         <property name="toolTip">
-          <string>&lt;p&gt;If checked, this field will force RoboJournal to use or suggest default settings for all applicable situations.&lt;/p&gt;</string>
-         </property>
-         <property name="text">
-          <string>Always use default settings</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QCheckBox" name="ShowConfirmation">
-         <property name="toolTip">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+      <property name="tabShape">
+       <enum>QTabWidget::Rounded</enum>
+      </property>
+      <property name="currentIndex">
+       <number>0</number>
+      </property>
+      <property name="elideMode">
+       <enum>Qt::ElideNone</enum>
+      </property>
+      <property name="documentMode">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="Tab_General">
+       <attribute name="title">
+        <string>General</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Program-wide settings</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget1">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>331</width>
+          <height>311</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_5" stretch="1,1">
+         <item>
+          <widget class="QGroupBox" name="groupBox_2">
+           <property name="title">
+            <string>RoboJournal Behavior</string>
+           </property>
+           <widget class="QWidget" name="layoutWidget2">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>311</width>
+              <height>111</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_4">
+             <item row="0" column="0" colspan="2">
+              <widget class="QCheckBox" name="UseDefaults">
+               <property name="toolTip">
+                <string>&lt;p&gt;If checked, this field will force RoboJournal to use or suggest default settings for all applicable situations.&lt;/p&gt;</string>
+               </property>
+               <property name="text">
+                <string>Always use default settings</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QCheckBox" name="ShowConfirmation">
+               <property name="toolTip">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;If checked, this will force RoboJournal to ask confirmation for certain actions.&lt;span style=&quot; color:#000000;&quot;&gt; You should leave this checked unless you know what you're doing.&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Show confirmation dialogs</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="IconText">
-         <property name="toolTip">
-          <string>&lt;p&gt;If checked, icons will have text labels. Some users may wish to disable these, especially if the toolbar is docked left or right.&lt;/p&gt;</string>
-         </property>
-         <property name="text">
-          <string>Show labels on toolbar icons</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_4">
-         <property name="text">
-          <string>Always dock toolbar</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="DefaultMenuPos">
-         <item>
-          <property name="text">
-           <string>Left</string>
-          </property>
+               </property>
+               <property name="text">
+                <string>Show confirmation dialogs</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="QCheckBox" name="IconText">
+               <property name="toolTip">
+                <string>&lt;p&gt;If checked, icons will have text labels. Some users may wish to disable these, especially if the toolbar is docked left or right.&lt;/p&gt;</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true"/>
+               </property>
+               <property name="text">
+                <string>Show labels on toolbar icons</string>
+               </property>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <spacer name="verticalSpacer_3">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>18</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="4" column="0">
+              <widget class="QLabel" name="label_4">
+               <property name="text">
+                <string>Always dock toolbar</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="1">
+              <widget class="QComboBox" name="DefaultMenuPos">
+               <item>
+                <property name="text">
+                 <string>Left</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Top (default)</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>Right</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>Top (default)</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Right</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_7">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>150</y>
-       <width>311</width>
-       <height>161</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Date and Time</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>291</width>
-        <height>126</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout" columnstretch="1,1" rowminimumheight="0,0,0,0,1,0">
-       <item row="0" column="0" colspan="2">
-        <widget class="QCheckBox" name="RecordTime">
-         <property name="toolTip">
-          <string>&lt;P&gt;Save the time of day when journal entries were made.&lt;/P&gt;</string>
-         </property>
-         <property name="text">
-          <string>Record time when entries are posted</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QCheckBox" name="UseLocalTime">
-         <property name="toolTip">
-          <string>&lt;P&gt;Force RoboJournal to use the local system time if checked. If unchecked, RoboJournal will use remote server time.&lt;/P&gt;</string>
-         </property>
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="autoFillBackground">
-          <bool>false</bool>
-         </property>
-         <property name="text">
-          <string>Use local system time</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0" colspan="2">
-        <widget class="QCheckBox" name="Use24Clock">
-         <property name="toolTip">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          <widget class="QGroupBox" name="groupBox_7">
+           <property name="title">
+            <string>Date and Time</string>
+           </property>
+           <widget class="QWidget" name="layoutWidget3">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>20</y>
+              <width>311</width>
+              <height>111</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout" columnstretch="1,1">
+             <item row="0" column="0" colspan="2">
+              <widget class="QCheckBox" name="RecordTime">
+               <property name="toolTip">
+                <string>&lt;P&gt;Save the time of day when journal entries were made.&lt;/P&gt;</string>
+               </property>
+               <property name="text">
+                <string>Record time when entries are posted</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QCheckBox" name="Use24Clock">
+               <property name="toolTip">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'MS Shell Dlg 2'; font-size:8.25pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-size:8pt;&quot;&gt;If checked, RoboJournal will display times in 24-hour format (e.g. 16:30 instead of 4:30 PM.) &lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Use 24-hour clock</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QLabel" name="label_8">
-         <property name="text">
-          <string>Preferred date format</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="DateFormat">
-         <property name="toolTip">
-          <string>Choose the style you wish dates to appear in. </string>
-         </property>
+               </property>
+               <property name="text">
+                <string>Use 24-hour clock</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0">
+              <widget class="QLabel" name="label_8">
+               <property name="text">
+                <string>Preferred date format</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="1">
+              <widget class="QComboBox" name="DateFormat">
+               <property name="toolTip">
+                <string>Choose the style you wish dates to appear in. </string>
+               </property>
+               <item>
+                <property name="text">
+                 <string>European</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>USA</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>ISO 8601</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <spacer name="verticalSpacer">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>270</width>
+                 <height>13</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <widget class="QLabel" name="DateExample">
+               <property name="text">
+                <string>Date Example Label</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Tab_Journal">
+       <attribute name="title">
+        <string>Journal</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Journal entry behavior settings</string>
+       </attribute>
+       <widget class="QWidget" name="layoutWidget4">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>331</width>
+          <height>311</height>
+         </rect>
+        </property>
+        <layout class="QVBoxLayout" name="verticalLayout_6" stretch="0,0">
          <item>
-          <property name="text">
-           <string>European</string>
-          </property>
+          <widget class="QGroupBox" name="groupBox_4">
+           <property name="title">
+            <string>Entry Range</string>
+           </property>
+           <widget class="QWidget" name="layoutWidget5">
+            <property name="geometry">
+             <rect>
+              <x>11</x>
+              <y>21</y>
+              <width>311</width>
+              <height>124</height>
+             </rect>
+            </property>
+            <layout class="QGridLayout" name="gridLayout_2">
+             <item row="0" column="0" colspan="2">
+              <widget class="QRadioButton" name="ShowAllEntries">
+               <property name="text">
+                <string>Show all entries in the database</string>
+               </property>
+              </widget>
+             </item>
+             <item row="1" column="0" colspan="2">
+              <widget class="QRadioButton" name="ShowEntryRange">
+               <property name="text">
+                <string>Only show entries from a limited range</string>
+               </property>
+              </widget>
+             </item>
+             <item row="4" column="0" colspan="2">
+              <spacer name="verticalSpacer_2">
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="sizeType">
+                <enum>QSizePolicy::Fixed</enum>
+               </property>
+               <property name="sizeHint" stdset="0">
+                <size>
+                 <width>20</width>
+                 <height>10</height>
+                </size>
+               </property>
+              </spacer>
+             </item>
+             <item row="5" column="0">
+              <widget class="QLabel" name="label_5">
+               <property name="text">
+                <string>Show entries from the last</string>
+               </property>
+               <property name="alignment">
+                <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+               </property>
+              </widget>
+             </item>
+             <item row="5" column="1">
+              <widget class="QComboBox" name="YearRange">
+               <item>
+                <property name="text">
+                 <string>Year</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>2 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>3 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>4 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>5 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>6 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>7 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>8 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>9 years</string>
+                </property>
+               </item>
+               <item>
+                <property name="text">
+                 <string>10 years</string>
+                </property>
+               </item>
+              </widget>
+             </item>
+             <item row="3" column="0" colspan="2">
+              <widget class="QCheckBox" name="RangeIndicator">
+               <property name="toolTip">
+                <string>If checked, RoboJournal displays the selected year range adjacent to the entry count.</string>
+               </property>
+               <property name="styleSheet">
+                <string notr="true">m</string>
+               </property>
+               <property name="text">
+                <string>Show year range indicator on statusbar</string>
+               </property>
+              </widget>
+             </item>
+             <item row="2" column="0" colspan="2">
+              <widget class="Line" name="line_2">
+               <property name="orientation">
+                <enum>Qt::Horizontal</enum>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </item>
          <item>
-          <property name="text">
-           <string>USA</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>ISO 8601</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <spacer name="verticalSpacer">
-         <property name="orientation">
-          <enum>Qt::Vertical</enum>
-         </property>
-         <property name="sizeHint" stdset="0">
-          <size>
-           <width>270</width>
-           <height>13</height>
-          </size>
-         </property>
-        </spacer>
-       </item>
-       <item row="5" column="0" colspan="2">
-        <widget class="QLabel" name="DateExample">
-         <property name="text">
-          <string>Date Example Label</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="Tab_Journal">
-    <attribute name="title">
-     <string>Journal</string>
-    </attribute>
-    <attribute name="toolTip">
-     <string>Journal entry behavior settings</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_4">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>311</width>
-       <height>111</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Entry Range</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>293</width>
-        <height>81</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2" rowstretch="0,0,1">
-       <item row="0" column="0" colspan="2">
-        <widget class="QRadioButton" name="ShowAllEntries">
-         <property name="text">
-          <string>Show all entries in the database</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QRadioButton" name="ShowEntryRange">
-         <property name="text">
-          <string>Only show entries from a limited range</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_5">
-         <property name="text">
-          <string>Show entries from the last</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="YearRange">
-         <item>
-          <property name="text">
-           <string>Year</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>2 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>3 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>4 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>5 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>6 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>7 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>8 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>9 years</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>10 years</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_6">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>130</y>
-       <width>311</width>
-       <height>121</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Journal Behavior</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>22</y>
-        <width>291</width>
-        <height>92</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout">
-       <item>
-        <widget class="QCheckBox" name="SortByDay">
-         <property name="toolTip">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+          <widget class="QGroupBox" name="groupBox_6">
+           <property name="title">
+            <string>Journal Behavior</string>
+           </property>
+           <widget class="QWidget" name="layoutWidget6">
+            <property name="geometry">
+             <rect>
+              <x>10</x>
+              <y>23</y>
+              <width>311</width>
+              <height>101</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout">
+             <item>
+              <widget class="QCheckBox" name="SortByDay">
+               <property name="toolTip">
+                <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:12px; margin-bottom:12px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;This option controls the complexity of the entry list. If checked, RoboJournal will sort all entries by the day they were made. (default behavior) If unchecked, all entries from the same month will be grouped together.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string>Sort journal entries by day</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="ShowTitle">
-         <property name="text">
-          <string>Show title for journal entries</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="AlternateRows">
-         <property name="toolTip">
-          <string>&lt;p&gt;&lt;b&gt;UI TWEAK:&lt;/b&gt; If checked, this option causes the entry tree to display alternating row colors to make the list easier to read. Depending on the color scheme you're using, this may look good or completely hideous, so you may wish to disable it in certain situations.&lt;/p&gt;</string>
-         </property>
-         <property name="text">
-          <string>Alternate row colors in entry tree</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QCheckBox" name="RichText">
-         <property name="toolTip">
-          <string>Allow rich text formatting. (experimental)</string>
-         </property>
-         <property name="text">
-          <string>Allow rich text (HTML) formatting</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="Tab_Appearance">
-    <attribute name="title">
-     <string>Appearance</string>
-    </attribute>
-    <attribute name="toolTip">
-     <string>Program appearance settings</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_8">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>311</width>
-       <height>81</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Theme</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>11</x>
-        <y>21</y>
-        <width>291</width>
-        <height>46</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_2">
-       <item>
-        <widget class="QRadioButton" name="NativeAppearance">
-         <property name="text">
-          <string>Use native operating system appearance</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QRadioButton" name="CustomAppearance">
-         <property name="text">
-          <string>Use custom font/background</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="CustomizeSettings">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>100</y>
-       <width>311</width>
-       <height>221</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Customize</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>291</width>
-        <height>191</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_3">
-       <item row="0" column="0" colspan="4">
-        <widget class="QLabel" name="label_9">
-         <property name="text">
-          <string>Select journal entry font/size:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="2" colspan="2">
-        <widget class="QComboBox" name="FontSize">
-         <property name="editable">
-          <bool>true</bool>
-         </property>
-         <property name="currentIndex">
-          <number>4</number>
-         </property>
-         <item>
-          <property name="text">
-           <string>8</string>
-          </property>
+               </property>
+               <property name="text">
+                <string>Sort journal entries by day</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="ShowTitle">
+               <property name="text">
+                <string>Show title for journal entries</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="AlternateRows">
+               <property name="toolTip">
+                <string>&lt;p&gt;&lt;b&gt;UI TWEAK:&lt;/b&gt; If checked, this option causes the entry tree to display alternating row colors to make the list easier to read. Depending on the color scheme you're using, this may look good or completely hideous, so you may wish to disable it in certain situations.&lt;/p&gt;</string>
+               </property>
+               <property name="text">
+                <string>Alternate row colors in entry tree</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QCheckBox" name="AutoLoad">
+               <property name="toolTip">
+                <string>&lt;p&gt;If this box is checked, Robojournal will load the most recent entry automatically at login time.&lt;/p&gt;</string>
+               </property>
+               <property name="text">
+                <string>Load newest entry automatically</string>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </widget>
+          </widget>
          </item>
-         <item>
-          <property name="text">
-           <string>9</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>10</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>11</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>12</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>14</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>16</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>18</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>20</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>22</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>24</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>26</string>
-          </property>
-         </item>
+        </layout>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Tab_Appearance">
+       <attribute name="title">
+        <string>Appearance</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Program appearance settings</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox_8">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>10</y>
+          <width>331</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Theme</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget7">
+         <property name="geometry">
+          <rect>
+           <x>11</x>
+           <y>21</y>
+           <width>311</width>
+           <height>48</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_2">
+          <item>
+           <widget class="QRadioButton" name="NativeAppearance">
+            <property name="text">
+             <string>Use native operating system appearance</string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QRadioButton" name="CustomAppearance">
+            <property name="text">
+             <string>Use custom font/background</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_10">
-         <property name="text">
-          <string>Font color:</string>
+       </widget>
+       <widget class="QGroupBox" name="CustomizeSettings">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>100</y>
+          <width>331</width>
+          <height>231</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Customize</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget8">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>311</width>
+           <height>201</height>
+          </rect>
          </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="ColorValue">
-         <property name="text">
-          <string/>
-         </property>
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="2" colspan="2">
-        <widget class="QPushButton" name="ColorButton">
-         <property name="text">
-          <string>Choose</string>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/icons/color_wheel.png</normaloff>:/icons/color_wheel.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0" colspan="4">
-        <widget class="QLabel" name="label_11">
-         <property name="text">
-          <string>Select background image from disk:</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0" colspan="2">
-        <widget class="QLineEdit" name="BGImage">
-         <property name="readOnly">
-          <bool>false</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="2">
-        <widget class="QPushButton" name="BrowseButton">
-         <property name="toolTip">
-          <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
+         <layout class="QGridLayout" name="gridLayout_3">
+          <item row="0" column="0" colspan="4">
+           <widget class="QLabel" name="label_9">
+            <property name="text">
+             <string>Select journal entry font/size:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="2" colspan="2">
+           <widget class="QComboBox" name="FontSize">
+            <property name="editable">
+             <bool>true</bool>
+            </property>
+            <property name="currentIndex">
+             <number>4</number>
+            </property>
+            <item>
+             <property name="text">
+              <string>8</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>9</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>10</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>11</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>12</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>14</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>16</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>18</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>20</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>22</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>24</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>26</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_10">
+            <property name="text">
+             <string>Font color:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="ColorValue">
+            <property name="text">
+             <string/>
+            </property>
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="2" colspan="2">
+           <widget class="QPushButton" name="ColorButton">
+            <property name="text">
+             <string>Choose</string>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/icons/color_wheel.png</normaloff>:/icons/color_wheel.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="3" column="0" colspan="4">
+           <widget class="QLabel" name="label_11">
+            <property name="text">
+             <string>Select background image from disk:</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="0" colspan="2">
+           <widget class="QLineEdit" name="BGImage">
+            <property name="readOnly">
+             <bool>false</bool>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="BrowseButton">
+            <property name="toolTip">
+             <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
 p, li { white-space: pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'DejaVu Sans'; font-size:9pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-family:'MS Shell Dlg 2'; font-size:8pt;&quot;&gt;Browse for an image on your computer (this turns background on)&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/icons/folder_picture.png</normaloff>:/icons/folder_picture.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="3">
-        <widget class="QPushButton" name="ClearButton">
-         <property name="toolTip">
-          <string>&lt;p&gt;Clear current image (this turns background off)&lt;/p&gt;</string>
-         </property>
-         <property name="text">
-          <string/>
-         </property>
-         <property name="icon">
-          <iconset resource="images.qrc">
-           <normaloff>:/icons/cross.png</normaloff>:/icons/cross.png</iconset>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="0" colspan="4">
-        <widget class="QCheckBox" name="TileBackground">
-         <property name="toolTip">
-          <string>&lt;p&gt;If checked, RoboJournal will repeat the background image on the X and Y axis. Use of seamless images is recommended.&lt;/p&gt;
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/icons/folder_picture.png</normaloff>:/icons/folder_picture.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="3">
+           <widget class="QPushButton" name="ClearButton">
+            <property name="toolTip">
+             <string>&lt;p&gt;Clear current image (this turns background off)&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+            <property name="icon">
+             <iconset resource="images.qrc">
+              <normaloff>:/icons/cross.png</normaloff>:/icons/cross.png</iconset>
+            </property>
+           </widget>
+          </item>
+          <item row="5" column="0" colspan="4">
+           <widget class="QCheckBox" name="TileBackground">
+            <property name="toolTip">
+             <string>&lt;p&gt;If checked, RoboJournal will repeat the background image on the X and Y axis. Use of seamless images is recommended.&lt;/p&gt;
 </string>
-         </property>
-         <property name="text">
-          <string>Tile background image</string>
-         </property>
+            </property>
+            <property name="text">
+             <string>Tile background image</string>
+            </property>
+           </widget>
+          </item>
+          <item row="6" column="0" colspan="4">
+           <widget class="QCheckBox" name="Entrylist_Background">
+            <property name="toolTip">
+             <string>&lt;p&gt;If checked, RoboJournal will apply the background texture to the entry list tree. If you clear or change the background image, you may need to restart RoboJournal for the changes to take effect.&lt;/p&gt;</string>
+            </property>
+            <property name="text">
+             <string>Apply background image to entry list</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0" colspan="2">
+           <widget class="QFontComboBox" name="Font"/>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item row="6" column="0" colspan="4">
-        <widget class="QCheckBox" name="Entrylist_Background">
-         <property name="toolTip">
-          <string>&lt;p&gt;If checked, RoboJournal will apply the background texture to the entry list tree. If you clear or change the background image, you may need to restart RoboJournal for the changes to take effect.&lt;/p&gt;</string>
+       </widget>
+      </widget>
+      <widget class="QWidget" name="Tab_Database">
+       <attribute name="title">
+        <string>Database</string>
+       </attribute>
+       <attribute name="toolTip">
+        <string>Database backend settings</string>
+       </attribute>
+       <widget class="QGroupBox" name="groupBox">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>80</y>
+          <width>329</width>
+          <height>121</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Default Database Settings</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget9">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>311</width>
+           <height>92</height>
+          </rect>
          </property>
-         <property name="text">
-          <string>Apply background image to entry list</string>
-         </property>
+         <layout class="QGridLayout" name="Settinglayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label">
+            <property name="layoutDirection">
+             <enum>Qt::LeftToRight</enum>
+            </property>
+            <property name="text">
+             <string>Default host</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QLineEdit" name="DefaultHost"/>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="label_2">
+            <property name="text">
+             <string>Default database</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLineEdit" name="DefaultDB"/>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="label_3">
+            <property name="text">
+             <string>Default username</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLineEdit" name="DefaultUser"/>
+          </item>
+         </layout>
         </widget>
-       </item>
-       <item row="1" column="0" colspan="2">
-        <widget class="QFontComboBox" name="Font"/>
-       </item>
-      </layout>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_3">
+        <property name="geometry">
+         <rect>
+          <x>10</x>
+          <y>210</y>
+          <width>329</width>
+          <height>81</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Security</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget10">
+         <property name="geometry">
+          <rect>
+           <x>10</x>
+           <y>20</y>
+           <width>311</width>
+           <height>48</height>
+          </rect>
+         </property>
+         <layout class="QVBoxLayout" name="verticalLayout_3">
+          <item>
+           <widget class="QCheckBox" name="AllowRoot">
+            <property name="text">
+             <string>Allow root database logins </string>
+            </property>
+           </widget>
+          </item>
+          <item>
+           <widget class="QCheckBox" name="UseSSL">
+            <property name="text">
+             <string>Use SSL encryption</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+       <widget class="QGroupBox" name="groupBox_5">
+        <property name="geometry">
+         <rect>
+          <x>11</x>
+          <y>11</y>
+          <width>329</width>
+          <height>61</height>
+         </rect>
+        </property>
+        <property name="title">
+         <string>Backend</string>
+        </property>
+        <widget class="QWidget" name="layoutWidget11">
+         <property name="geometry">
+          <rect>
+           <x>11</x>
+           <y>20</y>
+           <width>311</width>
+           <height>32</height>
+          </rect>
+         </property>
+         <layout class="QGridLayout" name="generaldblayout">
+          <item row="0" column="0">
+           <widget class="QLabel" name="label_6">
+            <property name="text">
+             <string>Database type</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="1">
+           <widget class="QComboBox" name="DBEngine">
+            <property name="editable">
+             <bool>false</bool>
+            </property>
+            <property name="sizeAdjustPolicy">
+             <enum>QComboBox::AdjustToContents</enum>
+            </property>
+            <item>
+             <property name="text">
+              <string>MySQL   </string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>SQLite</string>
+             </property>
+            </item>
+            <item>
+             <property name="text">
+              <string>Postgres</string>
+             </property>
+            </item>
+           </widget>
+          </item>
+          <item row="0" column="3">
+           <widget class="QLineEdit" name="DBPort">
+            <property name="maxLength">
+             <number>4</number>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="2">
+           <widget class="QLabel" name="label_7">
+            <property name="text">
+             <string>Port</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </widget>
+      </widget>
      </widget>
-    </widget>
-   </widget>
-   <widget class="QWidget" name="Tab_Database">
-    <attribute name="title">
-     <string>Database</string>
-    </attribute>
-    <attribute name="toolTip">
-     <string>Database backend settings</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>311</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Default Database Settings</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>291</width>
-        <height>92</height>
-       </rect>
+    </item>
+    <item>
+     <spacer name="verticalSpacer_4">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
       </property>
-      <layout class="QGridLayout" name="Settinglayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label">
-         <property name="layoutDirection">
-          <enum>Qt::LeftToRight</enum>
-         </property>
-         <property name="text">
-          <string>Default host</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="DefaultHost"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QLabel" name="label_2">
-         <property name="text">
-          <string>Default database</string>
-         </property>
-        </widget>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="DefaultDB"/>
-       </item>
-       <item row="2" column="0">
-        <widget class="QLabel" name="label_3">
-         <property name="text">
-          <string>Default username</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QLineEdit" name="DefaultUser"/>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>220</y>
-       <width>311</width>
-       <height>51</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Security</string>
-     </property>
-     <widget class="QCheckBox" name="AllowRoot">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>20</y>
-        <width>281</width>
-        <height>19</height>
-       </rect>
+      <property name="sizeType">
+       <enum>QSizePolicy::Maximum</enum>
       </property>
-      <property name="text">
-       <string>Allow root database logins </string>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>6</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_5">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>311</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>Backend</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>11</x>
-        <y>20</y>
-        <width>291</width>
-        <height>32</height>
-       </rect>
+    </item>
+    <item>
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
-      <layout class="QGridLayout" name="generaldblayout">
-       <item row="0" column="0">
-        <widget class="QLabel" name="label_6">
-         <property name="text">
-          <string>Database type</string>
-         </property>
-         <property name="alignment">
-          <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="1">
-        <widget class="QComboBox" name="DBEngine">
-         <property name="editable">
-          <bool>false</bool>
-         </property>
-         <property name="sizeAdjustPolicy">
-          <enum>QComboBox::AdjustToContents</enum>
-         </property>
-         <item>
-          <property name="text">
-           <string>MySQL   </string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>SQLite</string>
-          </property>
-         </item>
-         <item>
-          <property name="text">
-           <string>Postgres</string>
-          </property>
-         </item>
-        </widget>
-       </item>
-       <item row="0" column="3">
-        <widget class="QLineEdit" name="DBPort">
-         <property name="maxLength">
-          <number>4</number>
-         </property>
-        </widget>
-       </item>
-       <item row="0" column="2">
-        <widget class="QLabel" name="label_7">
-         <property name="text">
-          <string>Port</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Apply|QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </property>
      </widget>
-    </widget>
-   </widget>
+    </item>
+   </layout>
   </widget>
  </widget>
  <resources>

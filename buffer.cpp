@@ -45,7 +45,9 @@ bool Buffer::use_system_time;
 bool Buffer::tile_bg;
 bool Buffer::set_tree_background;
 bool Buffer::show_icon_labels;
-
+bool Buffer::autoload;
+bool Buffer::SSL;
+bool Buffer::use_indicator;
 bool Buffer::login_succeeded;
 
 
@@ -61,14 +63,13 @@ bool Buffer::keep_time;
 bool Buffer::show_title;
 QString Buffer::date_format;
 
-bool Buffer::needs_upgrade; // if true, journal needs to be upgraded to 0.2
+bool Buffer::needs_upgrade; // if true, journal needs to be upgraded from 0.1
 
 bool Buffer::editmode; //if true, start the Editor in revision mode. If False, create a blank entry
 QString Buffer::editentry; // the entry id that needs to be edited
 
 // Current RoboJournal Version used globally in Program.
-QString Buffer::version="0.2.1";
-
+QString Buffer::version="0.3";
 
 Buffer::Buffer()
 {

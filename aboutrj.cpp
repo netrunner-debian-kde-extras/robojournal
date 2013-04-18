@@ -29,6 +29,12 @@ AboutRJ::AboutRJ(QWidget *parent) :
 {
     ui->setupUi(this);
 
+#ifdef unix
+    QIcon unixicon(":/icons/robojournal-icon-big.png");
+    this->setWindowIcon(unixicon);
+
+#endif
+
     // hide question mark button in title bar when running on Windows
     this->setWindowFlags(this->windowFlags() & ~Qt::WindowContextHelpButtonHint);
 

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>332</height>
+    <width>397</width>
+    <height>370</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -15,7 +15,7 @@
   </property>
   <property name="windowIcon">
    <iconset resource="images.qrc">
-    <normaloff>:/icons/robojournal.ico</normaloff>:/icons/robojournal.ico</iconset>
+    <normaloff>:/icons/database_add.png</normaloff>:/icons/database_add.png</iconset>
   </property>
   <widget class="QWidget" name="layoutWidget">
    <property name="geometry">
@@ -23,7 +23,7 @@
      <x>10</x>
      <y>10</y>
      <width>381</width>
-     <height>311</height>
+     <height>351</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -36,12 +36,12 @@
        <attribute name="title">
         <string>1. Journal Type</string>
        </attribute>
-       <widget class="QWidget" name="layoutWidget">
+       <widget class="QWidget" name="layoutWidget1">
         <property name="geometry">
          <rect>
-          <x>11</x>
-          <y>11</y>
-          <width>361</width>
+          <x>10</x>
+          <y>10</y>
+          <width>351</width>
           <height>201</height>
          </rect>
         </property>
@@ -77,13 +77,13 @@
        <attribute name="title">
         <string>2. Basic Settings</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget2">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>361</width>
-          <height>201</height>
+          <width>351</width>
+          <height>231</height>
          </rect>
         </property>
         <layout class="QVBoxLayout" name="verticalLayout_4" stretch="1,0">
@@ -110,7 +110,11 @@
             </widget>
            </item>
            <item row="0" column="1">
-            <widget class="QLineEdit" name="JournalName"/>
+            <widget class="QLineEdit" name="JournalName">
+             <property name="toolTip">
+              <string>This is the name that will identify this journal on the host.</string>
+             </property>
+            </widget>
            </item>
            <item row="1" column="0">
             <widget class="QLabel" name="label_4">
@@ -124,6 +128,9 @@
            </item>
            <item row="1" column="1">
             <widget class="QLineEdit" name="Hostname">
+             <property name="toolTip">
+              <string>This is the machine on which the journal will be created. If the field is left blank the journal is created on this computer.</string>
+             </property>
              <property name="placeholderText">
               <string>localhost</string>
              </property>
@@ -140,7 +147,11 @@
             </widget>
            </item>
            <item row="2" column="1">
-            <widget class="QLineEdit" name="Username"/>
+            <widget class="QLineEdit" name="Username">
+             <property name="toolTip">
+              <string>This is the user that will be associated with this journal. If User already exists, this journal will be added to the group that this user controls. </string>
+             </property>
+            </widget>
            </item>
            <item row="3" column="0">
             <widget class="QLabel" name="label_6">
@@ -183,6 +194,22 @@
              </property>
             </widget>
            </item>
+           <item row="6" column="0" colspan="2">
+            <spacer name="verticalSpacer_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+             <property name="sizeType">
+              <enum>QSizePolicy::MinimumExpanding</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>20</width>
+               <height>40</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
           </layout>
          </item>
         </layout>
@@ -192,24 +219,20 @@
        <attribute name="title">
         <string>3. Authentication</string>
        </attribute>
-       <widget class="QWidget" name="">
+       <widget class="QWidget" name="layoutWidget3">
         <property name="geometry">
          <rect>
           <x>10</x>
           <y>10</y>
-          <width>361</width>
-          <height>171</height>
+          <width>351</width>
+          <height>161</height>
          </rect>
         </property>
-        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0">
+        <layout class="QVBoxLayout" name="verticalLayout_3" stretch="1,0,0">
          <item>
           <widget class="QLabel" name="label_9">
            <property name="text">
-            <string>&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
-&lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { white-space: pre-wrap; }
-&lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:'Sans'; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;RoboJournal requires root access to your MySQL installation to create the database and set up your new user account. Without the correct root password, the journal creation process will &lt;span style=&quot; font-weight:600;&quot;&gt;fail&lt;/span&gt;. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;p&gt;RoboJournal requires root access to your MySQL installation to create the database and set up your new user account. Without the correct root password, the journal creation process will fail.&lt;/p&gt;</string>
            </property>
            <property name="alignment">
             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
@@ -218,6 +241,19 @@ p, li { white-space: pre-wrap; }
             <bool>true</bool>
            </property>
           </widget>
+         </item>
+         <item>
+          <spacer name="verticalSpacer_3">
+           <property name="orientation">
+            <enum>Qt::Vertical</enum>
+           </property>
+           <property name="sizeHint" stdset="0">
+            <size>
+             <width>20</width>
+             <height>40</height>
+            </size>
+           </property>
+          </spacer>
          </item>
          <item>
           <layout class="QGridLayout" name="gridLayout_2">
@@ -262,6 +298,29 @@ p, li { white-space: pre-wrap; }
       </property>
       <property name="text">
        <string>Set this new journal as my default</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeType">
+       <enum>QSizePolicy::Maximum</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>10</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+    <item>
+     <widget class="Line" name="line">
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
       </property>
      </widget>
     </item>

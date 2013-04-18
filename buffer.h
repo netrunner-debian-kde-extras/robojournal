@@ -50,7 +50,8 @@ public:
     static bool allentries; // show all entries if true
     static bool showwarnings; // show warning dialogs if true
     static bool sortbyday; // sort list entires by day if true, by month if false
-
+    static bool SSL; // use SSL encryption
+    static bool use_indicator; // show entry indicator
     static bool needs_upgrade;
 
     static bool firstrun; // decide if the program is firstrun or not
@@ -62,7 +63,7 @@ public:
     static bool keep_time; // keep  entry time
     static bool use_system_time; // use system time if true, use remote server time if false
     static bool use_24_hour; // use 24 hour clock
-
+    static bool autoload; // autoload most recent journal entry
     static bool show_icon_labels; // should toolbar icons have text labels? checked == yes, unchecked == no
 
     // date format: 0=International, 1=USA, 2=Japan
@@ -86,6 +87,8 @@ public:
 
 
     static QString version; // keep track of RoboJournal Version;
+
+
 };
 
 #endif // BUFFER_H

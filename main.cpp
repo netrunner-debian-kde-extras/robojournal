@@ -39,7 +39,7 @@ int main(int argc, char *argv[])
     ConfigManager cm;
     cout << "=============================================="<< endl;
     cout << "\tSTARTING ROBOJOURNAL " << Buffer::version.toStdString() << endl;
-    cout << "\n   \"Free Journaling Software For Everyone\"" << endl;
+    cout << "\n   \"Free Journal Software For Everyone\"" << endl;
     cout << "=============================================="<< endl;
     cout << "STAGE 1: LOADING CONFIGURATION DATA..." << endl;
     cout << "=============================================="<< endl;
@@ -56,5 +56,8 @@ int main(int argc, char *argv[])
     cout << "Stage 2: SHOWING MAIN WINDOW" <<endl;
     cout << "=============================================="<< endl;
     w.show();
+
+
+
     return a.exec();
 }
