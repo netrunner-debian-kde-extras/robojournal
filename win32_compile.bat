@@ -2,7 +2,7 @@
 :: Enter the full path to the Qt libraries you wish to compile against. 
 :: You must specifically point to the "bin" folder in which qmake.exe resides, e.g. C:\qt-4.7.4\bin
 :: The Qt directory by itself (C:\qt-4.7.4\) will not work.
-@set qt=C:\qt-4.7.4\bin
+@set qt=C:\qt-4.8.4\bin
 
 :: Enter the full path to MinGW toolkit. It usually installs to C:\MinGW\bin
 @set mingw=C:\MinGW\bin
@@ -13,7 +13,7 @@
 
 @TITLE ROBOJOURNAL BUILD HELPER SCRIPT FOR WINDOWS 2000/XP/VISTA/7
 @ECHO.
-@ECHO Version 1.1 -- 8/16/2012
+@ECHO Version 1.4 -- 4/2/2013
 @ECHO.
 @ECHO #############################################################
 @ECHO.
@@ -40,26 +40,37 @@
 @path %qt%
 @qmake robojournal.pro
 @path %mingw%
-mingw32-make
-mingw32-make clean
+
+mingw32-make 
+
+strip -s release/robojournal.exe
+
+@path %qt%
+::@qhelpgenerator.exe doc/robojournal.qhp -o release/robojournal.qch
+::qcollectiongenerator.exe doc/robojournal.qhcp -o release/robojournal.qhc
+@qcollectiongenerator.exe doc/robojournal.qhcp -o doc/robojournal.qhc
+@move doc\robojournal.qch release
+@move doc\robojournal.qhc release
+@ECHO.
+
+:: Comment out the next three lines if you want to keep object code (*.o) and MOC-generated code
+@ECHO Cleaning up the build ^(release^) folder...
+@cd release
+@del *.cpp *.o
+
 @ECHO.
 @ECHO #############################################################
 @ECHO Build process complete!
 @ECHO.
 @ECHO robojournal.exe will work by itself if the Qt you compiled against 
-@ECHO was static-built. 
+@ECHO is static-built ^(i.e. integrates all dependencies into the compiled 
+@ECHO binary^).
 @ECHO.
-@ECHO If your Qt is ^*NOT^* static, locate the following files on your hard drive (they
-@ECHO MUST be from the same Qt and MinGW libraries you compiled against) and copy 
-@ECHO them to  %cd%\release.  
+@ECHO If your Qt is ^*NOT^* static-built, please consult the 
+@ECHO ^"Resolving Windows Dependencies^" section in the RoboJournal 
+@ECHO Compile^/Installation Guide (compile-instructions.xhtml) for 
+@ECHO instructions on how to resolve all necessary dependencies.
 @ECHO.
-@ECHO ^* libgcc_s_dw2-1.dll
-@ECHO ^* libmysql.dll
-@ECHO ^* libstdc^+^+-6.dll
-@ECHO ^* QtCore4.dll
-@ECHO ^* QtGui4.dll
-@ECHO ^* QtSql4.dll
-@ECHO.
-@ECHO Thank you for choosing RoboJournal. 
+@ECHO Thank you for using RoboJournal. 
 @ECHO.
 @pause
