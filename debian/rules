@@ -19,7 +19,7 @@ override_dh_auto_install:
 override_dh_compress:
 	
 	# convert the xhtml changelog to text
-	lynx -dump changelog.xhtml > changelog
+	html2text -style pretty changelog.xhtml > changelog
 
 	# bypass the robojournal help files compression
 	dh_compress -X.qhc -X.qch
