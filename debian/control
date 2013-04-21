@@ -24,7 +24,7 @@ Description: cross-platform journal/diary tool
 
 Package: robojournal-doc
 Architecture: all
-Depends: ${shlibs:Depends}, ${misc:Depends}
+Depends: ${misc:Depends}
 Recommends: robojournal
 Section: doc
 Description: cross-platform journal/diary tool - documentation
