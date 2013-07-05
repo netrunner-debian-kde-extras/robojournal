@@ -5,8 +5,10 @@
 
 DESTDIR=$(CURDIR)/debian/robojournal
 
-# Enable Hardening
+# For Hardening
 export DEB_BUILD_MAINT_OPTIONS = hardening=+all
+DPKG_EXPORT_BUILDFLAGS = 1
+include /usr/share/dpkg/buildflags.mk
 
 override_dh_auto_configure:
 	qmake robojournal.pro

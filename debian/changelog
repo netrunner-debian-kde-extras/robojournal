@@ -1,3 +1,10 @@
+robojournal (0.4.1-2) unstable; urgency=low
+
+  * [9c6fe78] Add patch to disable spellchec crash
+  * Upload to unstable 
+
+ -- Ritesh Raj Sarraf <rrs@debian.org>  Fri, 05 Jul 2013 15:00:20 +0530
+
 robojournal (0.4.1-1) experimental; urgency=low
 
   * New Upstream Release
