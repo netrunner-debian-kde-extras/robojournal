@@ -1,7 +1,8 @@
-robojournal (0.4.2-1) UNRELEASED; urgency=low
+robojournal (0.4.2-1) unstable; urgency=low
 
   * [b62d8ee] Imported Upstream version 0.4.2
-  * [9c6fe78] Add patch to disable spellchec crash
+  * [344ee28] Update patches
+  * [3366262] Fix Vcs Links
   * Upload to unstable 
 
  -- Ritesh Raj Sarraf <rrs@debian.org>  Tue, 22 Oct 2013 11:50:46 +0530
