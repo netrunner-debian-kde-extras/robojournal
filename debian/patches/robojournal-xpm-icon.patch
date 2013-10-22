@@ -2,7 +2,7 @@ xpm icon for robojournal
 Index: robojournal/icons/robojournal-icon.xpm
 ===================================================================
 --- /dev/null	1970-01-01 00:00:00.000000000 +0000
-+++ robojournal/icons/robojournal-icon.xpm	2012-05-02 17:54:23.614235572 +0530
++++ robojournal/icons/robojournal-icon.xpm	2013-10-22 11:56:51.916363171 +0530
 @@ -0,0 +1,511 @@
 +/* XPM */
 +static char *dummy[]={
