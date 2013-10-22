@@ -4,15 +4,6 @@
 #
 #-------------------------------------------------
 
-# User-changable values (3/31/13)
-
-
-# This should be the current version of this codebase. This value is used in the help file
-# install path; it should be changed for each version in order to keep the help files for
-# different versions separate.
-CURRENT_VERSION=0.4.1
-
-
 # Do *NOT* edit below this line!
 ######################################################
 
@@ -138,21 +129,27 @@ unix {
     package {
 	message(Creating a package-friendly build for Debian and other Linux distros...)
 	target.path = /usr/bin
+	
     }
     else{
 	message(Creating a regular build...)
 	target.path = /usr/local/bin
+
     }
 
     # Tweak for development/debugging: (3/31/13)
     # It is sometimes necessary to temporarily comment out the QMAKE_POST_LINK (ln 146) while compiling
-    # in Qt Creator b/c it may complain about doc/compile_doc.sh being missing during each build.
-    QMAKE_POST_LINK += bash doc/compile_doc.sh
+    # in Qt Creator b/c it may complain about doc/compile_doc.pl being missing during each build.
+    QMAKE_POST_LINK += perl doc/compile_doc.pl
 
     # set the final destinations of all install files
-    doc.path= /usr/share/doc/robojournal-$${CURRENT_VERSION}
-    doc.files= doc/robojournal.qhc doc/robojournal.qch
-
+    
+    man.files = robojournal.7.gz
+    man.path = /usr/share/man/man7
+    
+    doc.path = /usr/share/doc/robojournal
+    doc.files = doc/robojournal.qhc doc/robojournal.qch
+    
     shortcut.path = /usr/share/applications
     shortcut.files = menus/robojournal.desktop
 
@@ -165,7 +162,7 @@ unix {
     icon-deb.path = /usr/share/pixmaps
     icon-deb.files = menus/robojournal.xpm
 
-    INSTALLS += target shortcut icon shortcut-deb icon-deb doc
+    INSTALLS += target shortcut icon shortcut-deb icon-deb doc man
 
 }
 

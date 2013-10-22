@@ -70,7 +70,7 @@ bool Buffer::editmode; //if true, start the Editor in revision mode. If False, c
 QString Buffer::editentry; // the entry id that needs to be edited
 
 // Current RoboJournal Version used globally in Program.
-QString Buffer::version="0.4.1";
+QString Buffer::version="0.4.2";
 
 // new for 0.4
 bool Buffer::use_full_name;
@@ -138,6 +138,9 @@ QList<QStringList> Buffer::records;
 QString Buffer::reminder_choice;
 QString Buffer::reminder_title;
 bool Buffer::show_reminder_next_time;
+
+// new for 0.4.2
+QByteArray Buffer::mw_splitter_size; // former 0.5 code but backported on 9/13/13.
 
 Buffer::Buffer()
 {
